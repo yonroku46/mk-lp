@@ -14,7 +14,7 @@ const tutors = [
     id: 2,
     name: '아유미 선생님',
     schedule: '평일 저녁 / 주말 오전',
-    image: '/img/ayumi.jpg',
+    image: '/img/ayumi.png',
     link: 'https://whattime.co.kr/ayumi',
   },
 ];
