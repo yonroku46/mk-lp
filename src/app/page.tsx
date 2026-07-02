@@ -1,54 +1,57 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { ChevronRight, Clock } from 'lucide-react';
+'use client'
 
-const tutors = [
-  {
-    id: 1,
-    name: '미쿠 선생님',
-    schedule: '평일 오후',
-    image: '/img/miku.png',
-    link: 'https://whattime.co.kr/miku',
-  },
-  {
-    id: 2,
-    name: '아유미 선생님',
-    schedule: '평일 저녁 / 주말 오전',
-    image: '/img/ayumi.png',
-    link: 'https://whattime.co.kr/ayumi',
-  },
-];
+import Link from 'next/link';
+import { ChevronRight, Clock, Calendar, Ticket } from 'lucide-react';
 
 export default function HomePage() {
   return (
     <main>
       <div className="container">
-        <h1 className="title">선생님을 선택해주세요</h1>
-        <p className="notice">선생님 선택 후 예약 페이지로 이동합니다.<br />선생님별 수업 가능 시간이 다를 수 있습니다.</p>
-        <div className="tutor-list">
-          {tutors.map((tutor) => (
-            <Link href={tutor.link} key={tutor.id} className="tutor-button">
-              <div className="tutor-info">
-                <div className="image-wrapper">
-                  <Image
-                    src={tutor.image}
-                    alt={tutor.name}
-                    width={52}
-                    height={52}
-                    className="profile-img"
-                  />
-                </div>
-                <div className="text-content">
-                  <span className="tutor-name">{tutor.name}</span>
-                  <span className="tutor-schedule">
-                    <Clock size={12} strokeWidth={2} />
-                    {tutor.schedule}
-                  </span>
-                </div>
+        <h1 className="title">
+          스터디 예약하기
+          <div className="date">7월6일부로 통합 변경됩니다</div>
+        </h1>
+        <p className="notice">센세별 운영시간은 운영 시간표에서 확인 가능합니다.<br />횟수권 잔여확인은 메세지로 문의 부탁드립니다.</p>
+        <div className="action-list">
+          <Link href={'https://whattime.co.kr/miku'} className="action-button">
+            <div className="action-info">
+              <div className="icon-wrapper reserve">
+                <Calendar size={24} strokeWidth={2} />
               </div>
-              <ChevronRight size={18} strokeWidth={2} className="arrow" />
-            </Link>
-          ))}
+              <div className="text-content">
+                <span className="action-title">{'예약하기'}</span>
+              </div>
+            </div>
+            <ChevronRight size={18} strokeWidth={2} className="arrow" />
+          </Link>
+          <Link href={'/schedule'} className="action-button">
+            <div className="action-info">
+              <div className="icon-wrapper schedule">
+                <Clock size={24} strokeWidth={2} />
+              </div>
+              <div className="text-content">
+                <span className="action-title">{'운영 시간표 확인'}</span>
+                <span className="action-subtitle">
+                  {'미쿠/아유미 센세'}
+                </span>
+              </div>
+            </div>
+            <ChevronRight size={18} strokeWidth={2} className="arrow" />
+          </Link>
+          <button className="action-button" onClick={() => alert('현재 준비중인 기능입니다.\n메세지로 문의 부탁드립니다.')}>
+            <div className="action-info">
+              <div className="icon-wrapper ticket">
+                <Ticket size={24} strokeWidth={2} />
+              </div>
+              <div className="text-content">
+                <span className="action-title">{'횟수권 잔여 확인'}</span>
+                <span className="action-subtitle">
+                  {'비밀번호로 조회'}
+                </span>
+              </div>
+            </div>
+            <ChevronRight size={18} strokeWidth={2} className="arrow" />
+          </button>
         </div>
       </div>
     </main>

@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { generatePageMetadata } from "@/common/utils/metaUtils";
 import "../styles/globals.scss";
 
 const geistSans = Geist({
@@ -12,13 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "선생님 선택",
-  description: "원어민 감각의 일본어 과외. 내 스케줄에 맞는 선생님을 선택하고 지금 바로 수업을 예약하세요.",
-  icons: {
-    icon: "/icon/favicon.ico",
-  },
-};
+export const metadata = generatePageMetadata('home');
 
 export default function RootLayout({
   children,
