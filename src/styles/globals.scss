@@ -418,3 +418,282 @@ main {
     z-index: 15;
   }
 }
+
+/* ----------------------------------
+   Ticket Lookup Modal & Voucher Card
+------------------------------------- */
+.sch-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  animation: fadeIn 0.25s ease-out;
+
+  .sch-modal-content {
+    background: var(--card-bg);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 380px;
+    padding: 24px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s, color 0.2s;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        color: var(--text-primary);
+      }
+    }
+
+    .sch-modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+
+    .sch-modal-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .sch-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+
+      label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+      }
+
+      input {
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        background: #fafafa;
+        color: var(--text-primary);
+        transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+
+        &#pin-code {
+          -webkit-text-security: disc;
+        }
+
+        &:focus {
+          outline: none;
+          background: #ffffff;
+          border-color: #af52de;
+          box-shadow: 0 0 0 3px rgba(175, 82, 222, 0.12);
+        }
+      }
+    }
+
+    .sch-search-error {
+      font-size: 12.5px;
+      color: #ff3b30;
+      font-weight: 600;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .sch-btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: #af52de;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+
+      &:hover {
+        background-color: #9f3ee0;
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      &:disabled {
+        background-color: var(--border);
+        color: var(--text-secondary);
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+
+    .sch-btn-reset {
+      width: 100%;
+      padding: 12px;
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+        color: var(--text-primary);
+        border-color: var(--text-secondary);
+      }
+    }
+
+    /* Apple Style Voucher Card */
+    .sch-ticket-card {
+      background: linear-gradient(135deg, #b862eb 0%, #8b45cc 100%);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(139, 69, 204, 0.25);
+      margin-bottom: 18px;
+
+      /* Ticket cutouts on the sides with realistic depth shadow */
+      &::before, &::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: var(--card-bg);
+        border-radius: 50%;
+        bottom: 45px; /* Positioned right at the ticket divider */
+        z-index: 2;
+      }
+      &::before {
+        left: -8px;
+        box-shadow: inset -3px 0 5px rgba(0, 0, 0, 0.15);
+      }
+      &::after {
+        right: -8px;
+        box-shadow: inset 3px 0 5px rgba(0, 0, 0, 0.15);
+      }
+
+      .ticket-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .student-name {
+          font-size: 16px;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+        }
+
+        .ticket-badge {
+          font-size: 10.5px;
+          background: rgba(255, 255, 255, 0.2);
+          padding: 3px 8px;
+          border-radius: 20px;
+          font-weight: 700;
+          letter-spacing: -0.01em;
+        }
+      }
+
+      .ticket-body {
+        margin-top: 14px;
+
+        .ticket-detail {
+          font-size: 18px;
+          letter-spacing: -0.02em;
+        }
+      }
+
+      .ticket-stamps {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin: 16px 0 6px 0;
+
+        .ticket-stamp {
+          aspect-ratio: 1;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+          font-weight: 800;
+          transition: all 0.25s ease;
+
+          &.used {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+          }
+
+          &.remaining {
+            border: 1px dashed rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.6);
+          }
+        }
+      }
+
+      .ticket-divider {
+        border-top: 1px dashed rgba(255, 255, 255, 0.3);
+        margin: 14px 0;
+        position: relative;
+      }
+
+      .ticket-footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        opacity: 0.8;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
