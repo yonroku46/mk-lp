@@ -500,6 +500,7 @@ main {
         padding: 12px 14px;
         border: 1px solid var(--border);
         border-radius: 12px;
+        width: 100%;
         font-size: 14px;
         font-weight: 600;
         background: #fafafa;
@@ -508,6 +509,11 @@ main {
 
         &#pin-code {
           -webkit-text-security: disc;
+          padding-right: 44px; /* Space for the eye toggle button */
+
+          &.visible {
+            -webkit-text-security: none;
+          }
         }
 
         &:focus {
@@ -515,6 +521,40 @@ main {
           background: #ffffff;
           border-color: #af52de;
           box-shadow: 0 0 0 3px rgba(175, 82, 222, 0.12);
+        }
+      }
+
+      .pin-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+
+        .toggle-visibility-btn {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: var(--text-secondary);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 6px;
+          border-radius: 50%;
+          transition: all 0.2s;
+          z-index: 5;
+          
+          &:hover {
+            color: var(--text-primary);
+            background-color: rgba(0, 0, 0, 0.05);
+          }
+          
+          &:active {
+            transform: translateY(-50%) scale(0.9);
+          }
         }
       }
     }
@@ -525,6 +565,7 @@ main {
       font-weight: 600;
       margin-bottom: 16px;
       line-height: 1.4;
+      white-space: break-spaces;
     }
 
     .sch-btn-submit {

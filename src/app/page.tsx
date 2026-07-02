@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { ChevronRight, Clock, Calendar, Ticket, X } from 'lucide-react';
+import { ChevronRight, Clock, Calendar, Ticket, X, Eye, EyeOff } from 'lucide-react';
 
 interface StudentTicket {
   name: string;
@@ -16,6 +16,7 @@ export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [nickname, setNickname] = useState('');
   const [pinCode, setPinCode] = useState('');
+  const [isPinVisible, setIsPinVisible] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [ticketData, setTicketData] = useState<StudentTicket | null>(null);
@@ -86,6 +87,7 @@ export default function HomePage() {
   const resetSearch = () => {
     setNickname('');
     setPinCode('');
+    setIsPinVisible(false);
     setTicketData(null);
     setSearchError(null);
     setTimeout(() => {
@@ -177,18 +179,29 @@ export default function HomePage() {
 
                 <div className="sch-form-group">
                   <label htmlFor="pin-code">조회코드 (4자리 PIN)</label>
-                  <input
-                    ref={pinInputRef}
-                    id="pin-code"
-                    type="text"
-                    pattern="[0-9]*"
-                    inputMode="numeric"
-                    maxLength={4}
-                    placeholder="숫자 4자리 입력"
-                    value={pinCode}
-                    onChange={(e) => setPinCode(e.target.value.replace(/[^0-9]/g, ''))}
-                    required
-                  />
+                  <div className="pin-input-wrapper">
+                    <input
+                      ref={pinInputRef}
+                      id="pin-code"
+                      className={isPinVisible ? 'visible' : ''}
+                      type="text"
+                      pattern="[0-9]*"
+                      inputMode="numeric"
+                      maxLength={4}
+                      placeholder="숫자 4자리 입력"
+                      value={pinCode}
+                      onChange={(e) => setPinCode(e.target.value.replace(/[^0-9]/g, ''))}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="toggle-visibility-btn"
+                      onClick={() => setIsPinVisible(!isPinVisible)}
+                      aria-label={isPinVisible ? '코드 숨기기' : '코드 보기'}
+                    >
+                      {isPinVisible ? <Eye size={18} /> : <EyeOff size={18} />}
+                    </button>
+                  </div>
                 </div>
 
                 {searchError && <p className="sch-search-error">{searchError}</p>}

@@ -3,6 +3,9 @@ import { NextResponse } from 'next/server';
 // The Google Sheet URL is kept strictly on the server and is never sent to the client browser
 const SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLdUQKCVye8yT3mIS4FnoP_Cf66HnBk1tJYAX78IL6ZfbRxxvioU9UHzwtoAQN4Bie2kumK2G-DfVf/pub?output=csv';
 
+// In-memory map to store IP-based rate limit records
+const failedAttempts = new Map<string, { count: number; lockUntil: number }>();
+
 export async function POST(request: Request) {
   try {
     const { nickname, pinCode } = await request.json();
@@ -12,7 +15,19 @@ export async function POST(request: Request) {
     }
 
     if (!SPREADSHEET_URL || SPREADSHEET_URL.includes('YOUR_SPREADSHEET_URL_HERE')) {
-      return NextResponse.json({ error: '구글 스프레드시트 URL이 설정되지 않았습니다.' }, { status: 500 });
+      return NextResponse.json({ error: '데이터 URL이 설정되지 않았습니다.' }, { status: 500 });
+    }
+
+    // Rate Limiting Check (Max 5 failures, then lock for 3 minutes)
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    const now = Date.now();
+    const record = failedAttempts.get(ip);
+
+    if (record && record.lockUntil > now) {
+      const secondsLeft = Math.ceil((record.lockUntil - now) / 1000);
+      return NextResponse.json({
+        error: `보안을 위해 조회가 일시 잠금되었습니다.\n${secondsLeft}초 후 다시 시도해 주세요.`
+      }, { status: 429 });
     }
 
     // Fetch Google Sheets CSV securely on the server side
@@ -27,7 +42,7 @@ export async function POST(request: Request) {
     const rows = csvText
       .split(/\r?\n/)
       .map(line => line.split(',').map(cell => cell.replace(/^"(.*)"$/, '$1').trim()))
-      .filter(row => row.length >= 5); // Must have at least 5 columns (이름, 조회코드, 수업권명칭, 남은횟수, 총횟수)
+      .filter(row => row.length >= 6); // Needs at least 6 columns (index 0 to 5)
 
     // Lookup using plain text nickname and pinCode
     const foundRow = rows.find(row => {
@@ -37,6 +52,9 @@ export async function POST(request: Request) {
     });
 
     if (foundRow) {
+      // Reset attempts on successful match
+      failedAttempts.delete(ip);
+      
       // Return ONLY the matched student's data. Other students' data remains invisible
       return NextResponse.json({
         ticketName: foundRow[3],
@@ -45,7 +63,26 @@ export async function POST(request: Request) {
         expiry: foundRow[6] || '기한 없음',
       });
     } else {
-      return NextResponse.json({ error: '일치하는 수강권 정보를 찾을 수 없습니다. 이름과 조회코드를 확인해 주세요.' }, { status: 404 });
+      // Increment failed attempts
+      const currentAttempts = (record ? record.count : 0) + 1;
+      
+      if (currentAttempts >= 5) {
+        failedAttempts.set(ip, {
+          count: currentAttempts,
+          lockUntil: now + 3 * 60 * 1000 // 3 minutes lock
+        });
+        return NextResponse.json({
+          error: '조회코드를 5회 연속 틀렸습니다. 보안을 위해 3분 동안 조회가 차단됩니다.'
+        }, { status: 429 });
+      } else {
+        failedAttempts.set(ip, {
+          count: currentAttempts,
+          lockUntil: 0
+        });
+        return NextResponse.json({
+          error: `일치하는 수강권 정보를 찾을 수 없습니다. (남은 시도 횟수: ${5 - currentAttempts}회)`
+        }, { status: 404 });
+      }
     }
   } catch (error) {
     console.error('API Error:', error);
