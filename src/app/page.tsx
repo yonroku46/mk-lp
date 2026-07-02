@@ -4,11 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { ChevronRight, Clock, Calendar, Ticket, X } from 'lucide-react';
 
-const SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLdUQKCVye8yT3mIS4FnoP_Cf66HnBk1tJYAX78IL6ZfbRxxvioU9UHzwtoAQN4Bie2kumK2G-DfVf/pub?output=csv'; 
-
 interface StudentTicket {
   name: string;
-  code: string;
   ticketName: string;
   remaining: number;
   total: number;
@@ -46,45 +43,35 @@ export default function HomePage() {
     setSearchLoading(true);
     setSearchError(null);
     
-    if (!SPREADSHEET_URL || SPREADSHEET_URL.includes('YOUR_SPREADSHEET_URL_HERE')) {
-      setSearchError('구글 스프레드시트 URL이 설정되지 않았습니다. 관리자 세팅을 완료해 주세요.');
-      setSearchLoading(false);
-      return;
-    }
-    
     try {
-      const res = await fetch(SPREADSHEET_URL, {
-        cache: 'no-store'
-      });
-      if (!res.ok) throw new Error('Sheet not accessible');
-      const csvText = await res.text();
-      
-      const rows = csvText
-        .split(/\r?\n/)
-        .map(line => line.split(',').map(cell => cell.replace(/^"(.*)"$/, '$1').trim()))
-        .filter(row => row.length >= 5);
-        
-      const foundRow = rows.find(row => {
-        const sName = row[0] || '';
-        const sCode = row[1] || '';
-        return sName.toLowerCase() === nameInput.toLowerCase().trim() && sCode === codeInput.trim();
+      const res = await fetch('/api/tickets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nickname: nameInput,
+          pinCode: codeInput,
+        }),
       });
       
-      if (foundRow) {
-        localStorage.setItem('student-nickname', nameInput.trim());
-        setTicketData({
-          name: foundRow[0],
-          code: foundRow[1],
-          ticketName: foundRow[2],
-          remaining: Number(foundRow[3]) || 0,
-          total: Number(foundRow[4]) || 0,
-          expiry: foundRow[5] || '기한 없음',
-        });
-      } else {
-        setSearchError('일치하는 수강권 정보를 찾을 수 없습니다. 이름과 조회코드를 확인해 주세요.');
+      const data = await res.json();
+      
+      if (!res.ok) {
+        setSearchError(data.error || '조회에 실패했습니다.');
+        return;
       }
+      
+      localStorage.setItem('student-nickname', nameInput.trim());
+      setTicketData({
+        name: nameInput.trim(),
+        ticketName: data.ticketName,
+        remaining: data.remaining,
+        total: data.total,
+        expiry: data.expiry,
+      });
     } catch (err) {
-      setSearchError('데이터를 조회하는 중 오류가 발생했습니다. 구글 스프레드시트의 웹 게시 및 ID가 맞는지 확인해 주세요.');
+      setSearchError('데이터를 조회하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
     } finally {
       setSearchLoading(false);
     }
