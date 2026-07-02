@@ -172,7 +172,7 @@ export default function HomePage() {
               <form onSubmit={handleSearchSubmit}>
                 <h2 className="sch-modal-title">수강권 잔여 횟수 조회</h2>
                 <p className="sch-modal-desc">
-                  발급받으신 이름(닉네임)과 4자리 조회코드를 입력해 주세요.
+                  조회코드 변경 및 재발급은 관리자에게 문의해주세요.
                 </p>
 
                 <div className="sch-form-group">
