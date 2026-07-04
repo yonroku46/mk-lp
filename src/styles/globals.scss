@@ -419,9 +419,6 @@ main {
   }
 }
 
-/* ----------------------------------
-   Ticket Lookup Modal & Voucher Card
-------------------------------------- */
 .sch-modal-overlay {
   position: fixed;
   top: 0;
@@ -509,7 +506,7 @@ main {
 
         &#pin-code {
           -webkit-text-security: disc;
-          padding-right: 44px; /* Space for the eye toggle button */
+          padding-right: 44px;
 
           &.visible {
             -webkit-text-security: none;
@@ -615,7 +612,6 @@ main {
       }
     }
 
-    /* Apple Style Voucher Card */
     .sch-ticket-card {
       background: linear-gradient(135deg, #b862eb 0%, #8b45cc 100%);
       color: #ffffff;
@@ -626,7 +622,6 @@ main {
       box-shadow: 0 8px 24px rgba(139, 69, 204, 0.25);
       margin-bottom: 18px;
 
-      /* Ticket cutouts on the sides with realistic depth shadow */
       &::before, &::after {
         content: '';
         position: absolute;
@@ -634,7 +629,7 @@ main {
         height: 16px;
         background: var(--card-bg);
         border-radius: 50%;
-        bottom: 45px; /* Positioned right at the ticket divider */
+        bottom: 45px;
         z-index: 2;
       }
       &::before {
@@ -722,7 +717,6 @@ main {
   }
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

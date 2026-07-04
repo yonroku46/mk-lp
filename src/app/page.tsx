@@ -12,6 +12,32 @@ interface StudentTicket {
   expiry: string;
 }
 
+function getDDayString(expiryStr: string): string | null {
+  if (!expiryStr || expiryStr === '기한 없음') return null;
+
+  const cleanStr = expiryStr.replace(/\./g, '-').trim();
+  const match = cleanStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (!match) return null;
+
+  const [_, year, month, day] = match;
+  const expiryDate = new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
+  expiryDate.setHours(0, 0, 0, 0);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const diffTime = expiryDate.getTime() - today.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays > 0) {
+    return `D-${diffDays}`;
+  } else if (diffDays === 0) {
+    return 'D-Day';
+  } else {
+    return '만료';
+  }
+}
+
 export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [nickname, setNickname] = useState('');
@@ -21,6 +47,8 @@ export default function HomePage() {
   const [searchError, setSearchError] = useState<string | null>(null);
   const [ticketData, setTicketData] = useState<StudentTicket | null>(null);
 
+  const dDayText = ticketData ? getDDayString(ticketData.expiry) : null;
+
   const nameInputRef = useRef<HTMLInputElement>(null);
   const pinInputRef = useRef<HTMLInputElement>(null);
 
@@ -28,9 +56,9 @@ export default function HomePage() {
   useEffect(() => {
     if (isModalOpen) {
       const savedName = localStorage.getItem('student-nickname') || '';
-      setNickname(savedName);
       
       setTimeout(() => {
+        setNickname(savedName);
         if (savedName) {
           pinInputRef.current?.focus();
         } else {
@@ -249,7 +277,7 @@ export default function HomePage() {
                   <div className="ticket-divider" />
 
                   <div className="ticket-footer">
-                    <span>유효기간: {ticketData.expiry}</span>
+                    <span>유효기간: {ticketData.expiry}{dDayText ? ` (${dDayText})` : ''}</span>
                     <span>실시간 기준</span>
                   </div>
                 </div>

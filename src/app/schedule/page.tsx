@@ -51,8 +51,8 @@ export default function SchedulePage() {
       profileImage: '/img/miku.png',
       schedule: [
         { day: 0, start: '10:00', end: '22:00' },
-        { day: 1, start: '10:00', end: '18:30' },
-        { day: 2, start: '10:00', end: '18:30' },
+        { day: 1, start: '10:00', end: '18:00' },
+        { day: 2, start: '10:00', end: '18:00' },
         { day: 3, start: '10:00', end: '22:00' },
         { day: 4, start: '10:00', end: '22:00' },
         { day: 5, start: '10:00', end: '14:00' },
@@ -66,8 +66,8 @@ export default function SchedulePage() {
       borderColor: 'rgba(255, 149, 0, 0.35)',
       profileImage: '/img/ayumi.png',
       schedule: [
-        { day: 1, start: '18:30', end: '22:00' },
-        { day: 2, start: '18:30', end: '22:00' },
+        { day: 1, start: '18:00', end: '22:00' },
+        { day: 2, start: '18:00', end: '22:00' },
         { day: 5, start: '16:00', end: '18:00' },
       ],
     },
