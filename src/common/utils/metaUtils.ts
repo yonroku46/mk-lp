@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-type MetadataType = 'home' | 'schedule';
+type MetadataType = 'home' | 'schedule' | 'tickets' | 'tickets-lookup' | 'tickets-purchase' | 'tickets-pin-change';
 
 const APP_NAME = "스터디 예약";
 const APP_DESCRIPTION = "선생님과 학생의 더 효율적인 클래스 관리를 돕는 스마트 매니저";
@@ -14,6 +14,22 @@ const PAGE_INFO: Record<MetadataType, { title: string; description?: string }> =
   'schedule': {
     title: '운영 시간표 확인',
     description: '선생님별 운영 시간표를 확인하세요.'
+  },
+  'tickets': {
+    title: '횟수권 관리',
+    description: '횟수권 조회, 구입, 비밀번호 변경을 관리합니다.'
+  },
+  'tickets-lookup': {
+    title: '횟수권 잔여 확인',
+    description: '이름과 닉네임, 조회코드로 잔여 횟수를 조회하세요.'
+  },
+  'tickets-purchase': {
+    title: '수강권 구입 신청',
+    description: '횟수권을 온라인으로 편리하게 구매 신청하세요.'
+  },
+  'tickets-pin-change': {
+    title: '조회코드 변경',
+    description: '횟수권 조회 시 필요한 비밀번호(PIN) 변경을 신청하세요.'
   }
 };
 

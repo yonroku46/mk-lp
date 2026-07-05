@@ -15,6 +15,22 @@ const getCacheBustedUrl = (url: string) => {
   return `${url}${separator}t=${Date.now()}`;
 };
 
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 6000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
+  }
+}
+
 // In-memory map to store IP-based rate limit records
 const failedAttempts = new Map<string, { count: number; lockUntil: number }>();
 
@@ -92,7 +108,7 @@ export async function POST(request: Request) {
 
     // PRODUCTION MODE (Verify against Sheet 1, then lookup Sheet 2 and Sheet 3)
     // 1. Fetch & Parse User Info (Sheet 1)
-    const userRes = await fetch(getCacheBustedUrl(USER_SPREADSHEET_URL), { cache: 'no-store' });
+    const userRes = await fetchWithTimeout(getCacheBustedUrl(USER_SPREADSHEET_URL), { cache: 'no-store' }, 6000);
     if (!userRes.ok) {
       throw new Error('User Info Sheet fetch failed');
     }
@@ -142,8 +158,8 @@ export async function POST(request: Request) {
 
     // Fetch Sheets 2 and 3 in parallel
     const [ticketsRes, historyRes] = await Promise.all([
-      fetch(getCacheBustedUrl(TICKETS_LIST_SPREADSHEET_URL), { cache: 'no-store' }).catch(() => null),
-      HISTORY_SPREADSHEET_URL ? fetch(getCacheBustedUrl(HISTORY_SPREADSHEET_URL), { cache: 'no-store' }).catch(() => null) : null
+      fetchWithTimeout(getCacheBustedUrl(TICKETS_LIST_SPREADSHEET_URL), { cache: 'no-store' }, 6000).catch(() => null),
+      HISTORY_SPREADSHEET_URL ? fetchWithTimeout(getCacheBustedUrl(HISTORY_SPREADSHEET_URL), { cache: 'no-store' }, 6000).catch(() => null) : null
     ]);
 
     // 2. Parse Tickets (Sheet 2)
