@@ -11,7 +11,7 @@ export default function HomePage() {
           스터디 예약하기
           <div className="date">
             <Info size={18} />
-            7월6일부로 통합 변경됩니다
+            7월6일부로 통합 변경되었습니다.
           </div>
         </h1>
         <p className="notice">센세별 운영시간은 운영 시간표에서 확인 가능합니다.<br />횟수권 잔여확인은 메세지로 문의 부탁드립니다.</p>
