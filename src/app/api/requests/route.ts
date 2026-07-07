@@ -16,19 +16,39 @@ export async function POST(request: Request) {
     }
 
     let messageText = '';
+    let isAlimTalk = false;
+    let alimTalkTemplateId = '';
+
+    const SOLAPI_PF_ID = process.env.SOLAPI_PF_ID || '';
+    const SOLAPI_TEMPLATE_ID_PURCHASE = process.env.SOLAPI_TEMPLATE_ID_PURCHASE || '';
+    const SOLAPI_TEMPLATE_ID_PIN_CHANGE = process.env.SOLAPI_TEMPLATE_ID_PIN_CHANGE || '';
+    const APP_DOMAIN = process.env.APP_DOMAIN || 'http://localhost:3000';
+
     if (type === 'purchase') {
-      const { productName, depositor } = body;
-      messageText = `[LP 수강권 구매 신청]\n- 실명: ${realName}\n- 닉네임: ${nickname}\n- 연락처: ${phoneNumber}\n- 상품명: ${productName}\n- 입금자명: ${depositor}`;
+      const { productName, price, depositor } = body;
+      const formattedPrice = typeof price === 'number' ? price.toLocaleString() : price;
+
+      messageText = `[관리자 알림]\n새로운 수강권 구매 신청이 접수되었습니다. 입금 내역을 확인해 주세요.\n\n■ 신청 정보\n실명: ${realName}\n닉네임: ${nickname}\n연락처: ${phoneNumber}\n\n■ 수강권 정보\n상품명: ${productName}\n결제 금액: ${formattedPrice}원\n\n■ 입금 정보\n입금자명: ${depositor}`;
+
+      if (SOLAPI_PF_ID && SOLAPI_TEMPLATE_ID_PURCHASE) {
+        isAlimTalk = true;
+        alimTalkTemplateId = SOLAPI_TEMPLATE_ID_PURCHASE;
+      }
     } else if (type === 'pin-change') {
       const { newPin } = body;
-      messageText = `[LP 비밀번호 변경 신청]\n- 실명: ${realName}\n- 닉네임: ${nickname}\n- 연락처: ${phoneNumber}\n- 희망 PIN: ${newPin}`;
+      messageText = `[관리자 알림]\n새로운 비밀번호 변경 신청이 접수되었습니다.\n\n■ 신청 정보\n실명: ${realName}\n닉네임: ${nickname}\n\n■ 변경 정보 희망\nPIN: ${newPin}`;
+
+      if (SOLAPI_PF_ID && SOLAPI_TEMPLATE_ID_PIN_CHANGE) {
+        isAlimTalk = true;
+        alimTalkTemplateId = SOLAPI_TEMPLATE_ID_PIN_CHANGE;
+      }
     } else {
       return NextResponse.json({ error: '올바르지 않은 신청 유형입니다.' }, { status: 400 });
     }
 
-    console.log('Received Ticket Request:', messageText);
+    console.log('Received Request:', messageText);
 
-    // If Solapi credentials are set, call the Solapi SMS API
+    // If Solapi credentials are set, call the Solapi SMS/Alimtalk API
     if (SOLAPI_API_KEY && SOLAPI_API_SECRET && SOLAPI_SENDER_NUMBER && SOLAPI_ADMIN_NUMBER) {
       try {
         const date = new Date().toISOString();
@@ -40,14 +60,62 @@ export async function POST(request: Request) {
 
         const authHeader = `HMAC-SHA256 apiKey=${SOLAPI_API_KEY}, date=${date}, salt=${salt}, signature=${signature}`;
 
-        const payload = {
+        const payload: any = {
           message: {
             to: SOLAPI_ADMIN_NUMBER.replace(/-/g, '').trim(),
             from: SOLAPI_SENDER_NUMBER.replace(/-/g, '').trim(),
             text: messageText,
-            type: 'SMS'
+            type: isAlimTalk ? 'ATA' : 'SMS'
           }
         };
+
+        if (isAlimTalk) {
+          payload.message.kakaoOptions = {
+            pfId: SOLAPI_PF_ID,
+            templateId: alimTalkTemplateId
+          };
+
+          if (type === 'purchase') {
+            const { productName, price } = body;
+            const cleanPhone = phoneNumber.replace(/-/g, '').trim();
+
+            const confirmDataObj = { realName, phone: cleanPhone, productName };
+            const confirmToken = Buffer.from(JSON.stringify(confirmDataObj)).toString('base64url');
+
+            const completeDataObj = { realName, phone: cleanPhone, productName, price };
+            const completeToken = Buffer.from(JSON.stringify(completeDataObj)).toString('base64url');
+
+            payload.message.kakaoOptions.buttons = [
+              {
+                buttonType: 'WL',
+                buttonName: '입금 확인 요청',
+                linkMo: `${APP_DOMAIN}/api/admin/confirm-deposit?data=${confirmToken}`,
+                linkPc: `${APP_DOMAIN}/api/admin/confirm-deposit?data=${confirmToken}`
+              },
+              {
+                buttonType: 'WL',
+                buttonName: '수강권 발급 완료',
+                linkMo: `${APP_DOMAIN}/api/admin/complete-purchase?data=${completeToken}`,
+                linkPc: `${APP_DOMAIN}/api/admin/complete-purchase?data=${completeToken}`
+              }
+            ];
+          } else if (type === 'pin-change') {
+            const { newPin } = body;
+            const cleanPhone = phoneNumber.replace(/-/g, '').trim();
+
+            const pinChangeDataObj = { realName, phone: cleanPhone, newPin };
+            const pinChangeToken = Buffer.from(JSON.stringify(pinChangeDataObj)).toString('base64url');
+
+            payload.message.kakaoOptions.buttons = [
+              {
+                buttonType: 'WL',
+                buttonName: '재설정 처리 완료',
+                linkMo: `${APP_DOMAIN}/api/admin/complete-pin-change?data=${pinChangeToken}`,
+                linkPc: `${APP_DOMAIN}/api/admin/complete-pin-change?data=${pinChangeToken}`
+              }
+            ];
+          }
+        }
 
         const solapiRes = await fetch('https://api.solapi.com/messages/v4/send', {
           method: 'POST',
@@ -60,15 +128,15 @@ export async function POST(request: Request) {
 
         if (!solapiRes.ok) {
           const errData = await solapiRes.json().catch(() => ({}));
-          console.error('Solapi SMS Send Failed:', errData);
+          console.error('Solapi SMS/AlimTalk Send Failed:', errData);
         } else {
-          console.log('Solapi SMS Sent Successfully!');
+          console.log(`Solapi ${isAlimTalk ? 'AlimTalk' : 'SMS'} Sent Successfully!`);
         }
       } catch (smsErr) {
         console.error('Error invoking Solapi REST API:', smsErr);
       }
     } else {
-      console.warn('Solapi credentials not fully set. SMS notification skipped.');
+      console.warn('Solapi credentials not fully set. Notification skipped.');
     }
 
     return NextResponse.json({ success: true });
