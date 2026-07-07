@@ -42,10 +42,6 @@ export default function TicketsMenuPage() {
           <Link 
             href="/tickets/purchase" 
             className="action-button"
-            onClick={(e) => {
-              e.preventDefault();
-              alert('점검중인 기능입니다.\n담당자에게 문의 부탁드립니다.');
-            }}
           >
             <div className="action-info">
               <div className="icon-wrapper ticket">
@@ -62,10 +58,6 @@ export default function TicketsMenuPage() {
           <Link 
             href="/tickets/pin-change" 
             className="action-button"
-            onClick={(e) => {
-              e.preventDefault();
-              alert('점검중인 기능입니다.\n담당자에게 문의 부탁드립니다.');
-            }}
           >
             <div className="action-info">
               <div className="icon-wrapper ticket">

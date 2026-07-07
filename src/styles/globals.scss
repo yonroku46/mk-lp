@@ -50,6 +50,7 @@ main {
       align-items: center;
       gap: 4px;
       padding: 8px 10px;
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
       background: linear-gradient(180deg, #1eb2ff, #0f93e0);
       font-size: 0.875rem;
       font-weight: 400;

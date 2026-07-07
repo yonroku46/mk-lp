@@ -26,41 +26,42 @@ export default function PinChangePage() {
   }, []);
 
   const handlePinChangeSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!cRealName.trim() || !cNickname.trim() || !cPhone.trim() || newPin.length !== 4) return;
+    alert('점검중인 기능입니다.\n담당자에게 문의 부탁드립니다.');
+    // e.preventDefault();
+    // if (!cRealName.trim() || !cNickname.trim() || !cPhone.trim() || newPin.length !== 4) return;
 
-    setPinChangeLoading(true);
-    setPinChangeError(null);
+    // setPinChangeLoading(true);
+    // setPinChangeError(null);
 
-    try {
-      const res = await fetch('/api/requests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'pin-change',
-          realName: cRealName,
-          nickname: cNickname,
-          phoneNumber: cPhone,
-          newPin: newPin,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setPinChangeError(data.error || '비밀번호 변경 신청에 실패했습니다.');
-        return;
-      }
+    // try {
+    //   const res = await fetch('/api/requests', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       type: 'pin-change',
+    //       realName: cRealName,
+    //       nickname: cNickname,
+    //       phoneNumber: cPhone,
+    //       newPin: newPin,
+    //     }),
+    //   });
+    //   const data = await res.json();
+    //   if (!res.ok) {
+    //     setPinChangeError(data.error || '비밀번호 변경 신청에 실패했습니다.');
+    //     return;
+    //   }
 
-      // Save input details for better UX auto-fill
-      localStorage.setItem('student-realname', cRealName.trim());
-      localStorage.setItem('student-nickname', cNickname.trim());
-      localStorage.setItem('student-phone', cPhone.trim());
+    //   // Save input details for better UX auto-fill
+    //   localStorage.setItem('student-realname', cRealName.trim());
+    //   localStorage.setItem('student-nickname', cNickname.trim());
+    //   localStorage.setItem('student-phone', cPhone.trim());
 
-      setPinChangeSuccess(true);
-    } catch (err) {
-      setPinChangeError('신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-    } finally {
-      setPinChangeLoading(false);
-    }
+    //   setPinChangeSuccess(true);
+    // } catch (err) {
+    //   setPinChangeError('신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    // } finally {
+    //   setPinChangeLoading(false);
+    // }
   };
 
   return (

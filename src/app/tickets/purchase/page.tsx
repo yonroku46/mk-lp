@@ -43,42 +43,43 @@ export default function PurchasePage() {
   };
 
   const handlePurchaseSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!pRealName.trim() || !pNickname.trim() || !pPhone.trim() || !pProduct || !pDepositor.trim()) return;
+    alert('점검중인 기능입니다.\n담당자에게 문의 부탁드립니다.');
+    // e.preventDefault();
+    // if (!pRealName.trim() || !pNickname.trim() || !pPhone.trim() || !pProduct || !pDepositor.trim()) return;
 
-    setPurchaseLoading(true);
-    setPurchaseError(null);
+    // setPurchaseLoading(true);
+    // setPurchaseError(null);
 
-    try {
-      const res = await fetch('/api/requests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'purchase',
-          realName: pRealName,
-          nickname: pNickname,
-          phoneNumber: pPhone,
-          productName: pProduct,
-          depositor: pDepositor,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setPurchaseError(data.error || '구매 신청에 실패했습니다.');
-        return;
-      }
+    // try {
+    //   const res = await fetch('/api/requests', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       type: 'purchase',
+    //       realName: pRealName,
+    //       nickname: pNickname,
+    //       phoneNumber: pPhone,
+    //       productName: pProduct,
+    //       depositor: pDepositor,
+    //     }),
+    //   });
+    //   const data = await res.json();
+    //   if (!res.ok) {
+    //     setPurchaseError(data.error || '구매 신청에 실패했습니다.');
+    //     return;
+    //   }
       
-      // Save input details for better UX auto-fill
-      localStorage.setItem('student-realname', pRealName.trim());
-      localStorage.setItem('student-nickname', pNickname.trim());
-      localStorage.setItem('student-phone', pPhone.trim());
+    //   // Save input details for better UX auto-fill
+    //   localStorage.setItem('student-realname', pRealName.trim());
+    //   localStorage.setItem('student-nickname', pNickname.trim());
+    //   localStorage.setItem('student-phone', pPhone.trim());
       
-      setPurchaseSuccess(true);
-    } catch (err) {
-      setPurchaseError('신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-    } finally {
-      setPurchaseLoading(false);
-    }
+    //   setPurchaseSuccess(true);
+    // } catch (err) {
+    //   setPurchaseError('신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    // } finally {
+    //   setPurchaseLoading(false);
+    // }
   };
 
   return (
