@@ -55,7 +55,7 @@ export async function GET(request: Request) {
   }
 
   // 조립된 카카오 알림톡 전송 텍스트
-  const messageText = `[수강권 구입 완료]\n\n안녕하세요, ${realName}님! 수강권 구입이 성공적으로 완료되었습니다.\n\n■ 상품명: ${productName}\n■ 결제 금액: ${formattedPrice}원\n\n앞으로 즐겁게 수업을 받아보세요. 이용해 주셔서 감사합니다.`;
+  const messageText = `안녕하세요, ${realName}님!\n수강권 발급이 완료되었습니다.\n잔여 횟수 조회는 서비스 내에서 확인 가능합니다. \n\n■ 상품명: ${productName}\n■ 결제 금액: ${formattedPrice}원\n\n앞으로도 잘 부탁드립니다!`;
 
   let sendResult = false;
   let errorMsg = '';
@@ -79,7 +79,10 @@ export async function GET(request: Request) {
           type: 'ATA',
           kakaoOptions: {
             pfId: SOLAPI_PF_ID,
-            templateId: SOLAPI_TEMPLATE_ID_COMPLETE
+            templateId: SOLAPI_TEMPLATE_ID_COMPLETE,
+            highlight: {
+              title: '수강권 구입 완료'
+            }
           }
         }
       };

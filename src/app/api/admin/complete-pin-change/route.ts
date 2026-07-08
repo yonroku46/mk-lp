@@ -51,7 +51,7 @@ export async function GET(request: Request) {
   const cleanPhone = phone.replace(/-/g, '').trim();
 
   // 조립된 카카오 알림톡 전송 텍스트
-  const messageText = `[비밀번호 변경 완료]\n\n안녕하세요, ${realName}님! 요청하신 비밀번호(PIN) 변경 처리가 완료되었습니다.\n\n서비스 이용시 정상적으로 변경된 정보가 적용됩니다. 감사합니다.`;
+  const messageText = `안녕하세요, ${realName}님!\n요청하신 회원정보 변경 처리가 완료되었습니다.\n\n서비스 이용시 정상적으로 변경된 정보가 적용됩니다. 감사합니다.`;
 
   let sendResult = false;
   let errorMsg = '';
@@ -75,7 +75,10 @@ export async function GET(request: Request) {
           type: 'ATA',
           kakaoOptions: {
             pfId: SOLAPI_PF_ID,
-            templateId: SOLAPI_TEMPLATE_ID_PIN_COMPLETE
+            templateId: SOLAPI_TEMPLATE_ID_PIN_COMPLETE,
+            highlight: {
+              title: '회원정보 변경 완료'
+            }
           }
         }
       };
