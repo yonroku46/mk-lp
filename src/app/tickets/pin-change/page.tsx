@@ -3,10 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, Eye, EyeOff, Check } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 export default function PinChangePage() {
-  const router = useRouter();
   const [cRealName, setCRealName] = useState('');
   const [cNickname, setCNickname] = useState('');
   const [cPhone, setCPhone] = useState('');
@@ -15,11 +13,6 @@ export default function PinChangePage() {
   const [pinChangeLoading, setPinChangeLoading] = useState(false);
   const [pinChangeSuccess, setPinChangeSuccess] = useState(false);
   const [pinChangeError, setPinChangeError] = useState<string | null>(null);
-
-  useEffect(() => {
-    alert('현재기능은 점검중입니다.\n관련 기능은 관리자에게 문의해주세요.');
-    router.back();
-  }, [router]);
 
   // Auto-fill from localStorage on mount
   useEffect(() => {

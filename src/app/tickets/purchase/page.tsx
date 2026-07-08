@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, Check, Copy } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 const BANK_ACCOUNT = '토스뱅크 1001-3926-0609';
 const BANK_OWNER = 'MATOBA MIKU';
@@ -46,7 +45,6 @@ const TICKET_PRODUCT_GROUPS: TicketGroup[] = [
 ];
 
 export default function PurchasePage() {
-  const router = useRouter();
   const [pRealName, setPRealName] = useState('');
   const [pNickname, setPNickname] = useState('');
   const [pPhone, setPPhone] = useState('');
@@ -59,11 +57,6 @@ export default function PurchasePage() {
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    alert('현재기능은 점검중입니다.\n관련 기능은 관리자에게 문의해주세요.');
-    router.back();
-  }, [router]);
 
   // Auto-fill from localStorage on mount
   useEffect(() => {
