@@ -76,9 +76,7 @@ export async function GET(request: Request) {
           kakaoOptions: {
             pfId: SOLAPI_PF_ID,
             templateId: SOLAPI_TEMPLATE_ID_PIN_COMPLETE,
-            highlight: {
-              title: '회원정보 변경 완료'
-            }
+            title: '회원정보 변경 완료'
           }
         }
       };

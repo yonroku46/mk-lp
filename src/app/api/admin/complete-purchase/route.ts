@@ -80,9 +80,7 @@ export async function GET(request: Request) {
           kakaoOptions: {
             pfId: SOLAPI_PF_ID,
             templateId: SOLAPI_TEMPLATE_ID_COMPLETE,
-            highlight: {
-              title: '수강권 구입 완료'
-            }
+            title: '수강권 구입 완료'
           }
         }
       };

@@ -75,7 +75,8 @@ export async function GET(request: Request) {
           type: 'ATA',
           kakaoOptions: {
             pfId: SOLAPI_PF_ID,
-            templateId: SOLAPI_TEMPLATE_ID_CONFIRM
+            templateId: SOLAPI_TEMPLATE_ID_CONFIRM,
+            title: '입금 안내'
           }
         }
       };
