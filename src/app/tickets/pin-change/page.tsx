@@ -130,7 +130,7 @@ export default function PinChangePage() {
                   <input
                     id="change-pin"
                     className={cPinVisible ? 'visible' : ''}
-                    type="text"
+                    type={cPinVisible ? 'text' : 'password'}
                     pattern="[0-9]*"
                     inputMode="numeric"
                     maxLength={4}
