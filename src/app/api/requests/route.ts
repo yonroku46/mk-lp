@@ -90,17 +90,13 @@ export async function POST(request: Request) {
                 buttonType: 'AL',
                 buttonName: '입금 확인 요청',
                 linkAnd: `${APP_DOMAIN}/api/admin/confirm-deposit?data=${confirmToken}`,
-                linkIos: `${APP_DOMAIN}/api/admin/confirm-deposit?data=${confirmToken}`,
-                linkMo: `${APP_DOMAIN}/api/admin/confirm-deposit?data=${confirmToken}`,
-                linkPc: `${APP_DOMAIN}/api/admin/confirm-deposit?data=${confirmToken}`
+                linkIos: `${APP_DOMAIN}/api/admin/confirm-deposit?data=${confirmToken}`
               },
               {
                 buttonType: 'AL',
                 buttonName: '수강권 발급 완료',
                 linkAnd: `${APP_DOMAIN}/api/admin/complete-purchase?data=${completeToken}`,
-                linkIos: `${APP_DOMAIN}/api/admin/complete-purchase?data=${completeToken}`,
-                linkMo: `${APP_DOMAIN}/api/admin/complete-purchase?data=${completeToken}`,
-                linkPc: `${APP_DOMAIN}/api/admin/complete-purchase?data=${completeToken}`
+                linkIos: `${APP_DOMAIN}/api/admin/complete-purchase?data=${completeToken}`
               }
             ];
           } else if (type === 'pin-change') {
@@ -115,9 +111,7 @@ export async function POST(request: Request) {
                 buttonType: 'AL',
                 buttonName: '재설정 처리 완료',
                 linkAnd: `${APP_DOMAIN}/api/admin/complete-pin-change?data=${pinChangeToken}`,
-                linkIos: `${APP_DOMAIN}/api/admin/complete-pin-change?data=${pinChangeToken}`,
-                linkMo: `${APP_DOMAIN}/api/admin/complete-pin-change?data=${pinChangeToken}`,
-                linkPc: `${APP_DOMAIN}/api/admin/complete-pin-change?data=${pinChangeToken}`
+                linkIos: `${APP_DOMAIN}/api/admin/complete-pin-change?data=${pinChangeToken}`
               }
             ];
           }
