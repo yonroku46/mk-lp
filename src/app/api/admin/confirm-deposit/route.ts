@@ -89,10 +89,14 @@ export async function GET(request: Request) {
         body: JSON.stringify(payload)
       });
 
+      const resData = await solapiRes.json().catch(() => ({}));
+
       if (!solapiRes.ok) {
-        const errData = await solapiRes.json().catch(() => ({}));
-        errorMsg = errData.message || '솔라피 API 전송 실패';
-        console.error('AlimTalk Send Failed:', errData);
+        errorMsg = resData.errorMessage || resData.message || '솔라피 API 전송 실패';
+        console.error('AlimTalk Send Failed:', resData);
+      } else if (resData.count && resData.count.registeredFailed > 0) {
+        errorMsg = '알림톡 발송 접수에 실패했습니다. (템플릿 또는 수신번호 오류)';
+        console.error('AlimTalk Registration Failed:', resData);
       } else {
         sendResult = true;
       }

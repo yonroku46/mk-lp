@@ -132,17 +132,34 @@ export async function POST(request: Request) {
           body: JSON.stringify(payload)
         });
 
+        const resData = await solapiRes.json().catch(() => ({}));
+
         if (!solapiRes.ok) {
-          const errData = await solapiRes.json().catch(() => ({}));
-          console.error('Solapi SMS/AlimTalk Send Failed:', errData);
-        } else {
-          console.log(`Solapi ${isAlimTalk ? 'AlimTalk' : 'SMS'} Sent Successfully!`);
+          console.error('Solapi SMS/AlimTalk Send Failed:', resData);
+          return NextResponse.json({ 
+            error: `알림 전송 실패: ${resData.errorMessage || '솔라피 서버 오류'}` 
+          }, { status: 500 });
         }
-      } catch (smsErr) {
+
+        if (resData.count && resData.count.registeredFailed > 0) {
+          console.error('Solapi SMS/AlimTalk Registration Failed:', resData);
+          return NextResponse.json({ 
+            error: '알림 발송 접수에 실패했습니다. (템플릿 정보 또는 번호 불일치)' 
+          }, { status: 500 });
+        }
+
+        console.log(`Solapi ${isAlimTalk ? 'AlimTalk' : 'SMS'} Sent Successfully!`);
+      } catch (smsErr: any) {
         console.error('Error invoking Solapi REST API:', smsErr);
+        return NextResponse.json({ 
+          error: `알림 API 호출 중 오류 발생: ${smsErr.message || '네트워크 오류'}` 
+        }, { status: 500 });
       }
     } else {
       console.warn('Solapi credentials not fully set. Notification skipped.');
+      return NextResponse.json({ 
+        error: '솔라피 환경 변수(API Key, 발신/수신번호 등) 설정이 누락되었습니다.' 
+      }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
