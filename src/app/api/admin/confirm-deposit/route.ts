@@ -252,16 +252,28 @@ function renderAuthHtml(realName: string, productName: string, isError: boolean)
           </div>
           <div class="form-group">
             <label for="code">관리자 인증번호</label>
-            <input type="password" id="code" class="input-code" maxlength="4" placeholder="••••" autofocus>
+            <input type="password" id="code" class="input-code" pattern="[0-9]*" inputmode="numeric" maxlength="4" placeholder="••••" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             <div id="error" class="error-msg">${isError ? '인증번호가 일치하지 않습니다.' : ''}</div>
           </div>
           <div class="btn-group">
-            <button class="btn btn-cancel" onclick="window.close()">취소</button>
+            <button class="btn btn-cancel" onclick="closeWindow()">취소</button>
             <button class="btn btn-submit" onclick="submitCode()">인증 후 발송</button>
           </div>
         </div>
 
         <script>
+          function closeWindow() {
+            var ua = navigator.userAgent.toLowerCase();
+            if (ua.indexOf("kakaotalk") > -1) {
+              if (/iphone|ipad|ipod/i.test(ua)) {
+                location.href = "kakaoweb://closeBrowser";
+              } else {
+                location.href = "kakaotalk://inappbrowser/close";
+              }
+            } else {
+              window.close();
+            }
+          }
           function submitCode() {
             const codeVal = document.getElementById('code').value;
             if (!codeVal) {
@@ -361,8 +373,22 @@ function renderSuccessHtml(realName: string, productName: string) {
             <strong>${realName}</strong>님께 입금 지연 및 확인 요청 알림톡이 성공적으로 전송되었습니다.<br/>
             (상품: ${productName})
           </p>
-          <button class="btn-close" onclick="window.close()">창 닫기</button>
+          <button class="btn-close" onclick="closeWindow()">창 닫기</button>
         </div>
+        <script>
+          function closeWindow() {
+            var ua = navigator.userAgent.toLowerCase();
+            if (ua.indexOf("kakaotalk") > -1) {
+              if (/iphone|ipad|ipod/i.test(ua)) {
+                location.href = "kakaoweb://closeBrowser";
+              } else {
+                location.href = "kakaotalk://inappbrowser/close";
+              }
+            } else {
+              window.close();
+            }
+          }
+        </script>
       </body>
     </html>
   `;
@@ -440,8 +466,22 @@ function renderErrorHtml(errorMsg: string) {
           <div class="icon">!</div>
           <h1>알림톡 발송 실패</h1>
           <p>${errorMsg}</p>
-          <button class="btn-close" onclick="window.close()">창 닫기</button>
+          <button class="btn-close" onclick="closeWindow()">창 닫기</button>
         </div>
+        <script>
+          function closeWindow() {
+            var ua = navigator.userAgent.toLowerCase();
+            if (ua.indexOf("kakaotalk") > -1) {
+              if (/iphone|ipad|ipod/i.test(ua)) {
+                location.href = "kakaoweb://closeBrowser";
+              } else {
+                location.href = "kakaotalk://inappbrowser/close";
+              }
+            } else {
+              window.close();
+            }
+          }
+        </script>
       </body>
     </html>
   `;
