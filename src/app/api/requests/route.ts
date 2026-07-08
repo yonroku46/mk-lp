@@ -79,7 +79,7 @@ export async function POST(request: Request) {
             const { productName, price } = body;
             const cleanPhone = phoneNumber.replace(/-/g, '').trim();
 
-            const confirmDataObj = { realName, phone: cleanPhone, productName };
+            const confirmDataObj = { realName, phone: cleanPhone, productName, price };
             const confirmToken = Buffer.from(JSON.stringify(confirmDataObj)).toString('base64url');
 
             const completeDataObj = { realName, phone: cleanPhone, productName, price };

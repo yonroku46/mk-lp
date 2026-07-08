@@ -9,6 +9,9 @@ const SOLAPI_TEMPLATE_ID_CONFIRM = process.env.SOLAPI_TEMPLATE_ID_CONFIRM || '';
 
 const ADMIN_PASSCODE = '0607';
 
+const BANK_ACCOUNT = '토스뱅크 1001-3926-0609';
+const BANK_OWNER = 'MATOBA MIKU';
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const data = searchParams.get('data') || '';
@@ -17,6 +20,7 @@ export async function GET(request: Request) {
   let realName = '';
   let phone = '';
   let productName = '';
+  let price = '';
 
   if (data) {
     try {
@@ -24,6 +28,7 @@ export async function GET(request: Request) {
       realName = decoded.realName || '';
       phone = decoded.phone || '';
       productName = decoded.productName || '';
+      price = decoded.price || '';
     } catch (e) {
       return new NextResponse(
         renderErrorHtml('파라미터 데이터 해석 중 오류가 발생했습니다.'),
@@ -32,26 +37,30 @@ export async function GET(request: Request) {
     }
   }
 
-  if (!realName || !phone || !productName) {
+  if (!realName || !phone || !productName || !price) {
     return new NextResponse(
-      renderErrorHtml('필수 입력 정보(이름, 연락처, 상품명)가 누락되었습니다.'),
-      { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-    );
-  }
-
-  // 인증코드가 없거나 올바르지 않으면 인증 대기 화면을 보여줌
-  if (code !== ADMIN_PASSCODE) {
-    const isError = code.length > 0; // 뭔가 입력했는데 틀린 경우 에러메시지 표시용
-    return new NextResponse(
-      renderAuthHtml(realName, productName, isError),
+      renderErrorHtml('필수 입력 정보(이름, 연락처, 상품명, 금액)가 누락되었습니다.'),
       { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
     );
   }
 
   const cleanPhone = phone.replace(/-/g, '').trim();
+  const priceStr = String(price);
+  const rawPrice = Number(priceStr.replace(/[^0-9]/g, ''));
+  const formattedPrice = isNaN(rawPrice) ? priceStr : rawPrice.toLocaleString();
+
+  // 인증코드가 없거나 올바르지 않으면 인증 대기 화면을 보여줌
+  if (code !== ADMIN_PASSCODE) {
+    const isError = code.length > 0; // 뭔가 입력했는데 틀린 경우 에러메시지 표시용
+    return new NextResponse(
+      renderAuthHtml(realName, productName, formattedPrice, isError),
+      { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+    );
+  }
 
   // 조립된 카카오 알림톡 전송 텍스트
-  const messageText = `[입금 안내]\n\n안녕하세요, ${realName}님.\n신청해주신 수강권의 입금 확인이 지연되어 안내해 드립니다.\n\n■ 신청 수강권: ${productName}\n■ 입금 계좌: 토스뱅크 1001-3926-0609 (MATOBA MIKU)\n\n입금 확인 시 영업시간 내에 순차적으로 수강권이 발급됩니다. 감사합니다.`;
+  const bankInfo = `${BANK_ACCOUNT} (${BANK_OWNER})`;
+  const messageText = `안녕하세요, ${realName}님.\n신청해주신 수강권의 입금 확인이 지연되어 안내해 드립니다.\n\n■ 신청 수강권: ${productName}\n■ 결제 금액: ${formattedPrice}원\n■ 입금 계좌: ${bankInfo}\n\n입금 확인 시 영업시간 내에 순차적으로 수강권이 발급됩니다. 감사합니다.`;
 
   let sendResult = false;
   let errorMsg = '';
@@ -111,7 +120,7 @@ export async function GET(request: Request) {
   }
 
   if (sendResult) {
-    return new NextResponse(renderSuccessHtml(realName, productName), {
+    return new NextResponse(renderSuccessHtml(realName, productName, formattedPrice), {
       headers: { 'Content-Type': 'text/html; charset=utf-8' }
     });
   } else {
@@ -121,7 +130,7 @@ export async function GET(request: Request) {
   }
 }
 
-function renderAuthHtml(realName: string, productName: string, isError: boolean) {
+function renderAuthHtml(realName: string, productName: string, price: string, isError: boolean) {
   return `
     <!DOCTYPE html>
     <html lang="ko">
@@ -249,6 +258,10 @@ function renderAuthHtml(realName: string, productName: string, isError: boolean)
               <span class="info-label">신청 상품</span>
               <span class="info-value">${productName}</span>
             </div>
+            <div class="info-row" style="border-top: 1px dashed #e5e5ea; margin-top: 8px; padding-top: 8px;">
+              <span class="info-label">결제 금액</span>
+              <span class="info-value" style="color: #af52de;">${price}원</span>
+            </div>
           </div>
           <div class="form-group">
             <label for="code">관리자 인증번호</label>
@@ -295,7 +308,7 @@ function renderAuthHtml(realName: string, productName: string, isError: boolean)
   `;
 }
 
-function renderSuccessHtml(realName: string, productName: string) {
+function renderSuccessHtml(realName: string, productName: string, price: string) {
   return `
     <!DOCTYPE html>
     <html lang="ko">
@@ -371,7 +384,7 @@ function renderSuccessHtml(realName: string, productName: string) {
           <h1>입금 확인 요청 발송</h1>
           <p>
             <strong>${realName}</strong>님께 입금 지연 및 확인 요청 알림톡이 성공적으로 전송되었습니다.<br/>
-            (상품: ${productName})
+            (상품: ${productName} / 금액: ${price}원)
           </p>
           <button class="btn-close" onclick="closeWindow()">창 닫기</button>
         </div>
