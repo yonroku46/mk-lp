@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       }
     } else if (type === 'pin-change') {
       const { newPin } = body;
-      messageText = `[관리자 알림]\n새로운 비밀번호 변경 신청이 접수되었습니다.\n\n■ 신청 정보\n실명: ${realName}\n닉네임: ${nickname}\n\n■ 변경 정보 희망\nPIN: ${newPin}`;
+      messageText = `[관리자 알림]\n새로운 회원정보 변경 신청이 접수되었습니다.\n\n■ 신청 정보\n실명: ${realName}\n닉네임: ${nickname}\n\n■ 변경 정보 희망\nPIN: ${newPin}`;
 
       if (SOLAPI_PF_ID && SOLAPI_TEMPLATE_ID_PIN_CHANGE) {
         isAlimTalk = true;
@@ -87,14 +87,18 @@ export async function POST(request: Request) {
 
             payload.message.kakaoOptions.buttons = [
               {
-                buttonType: 'WL',
+                buttonType: 'AL',
                 buttonName: '입금 확인 요청',
+                linkAnd: `${APP_DOMAIN}/api/admin/confirm-deposit?data=${confirmToken}`,
+                linkIos: `${APP_DOMAIN}/api/admin/confirm-deposit?data=${confirmToken}`,
                 linkMo: `${APP_DOMAIN}/api/admin/confirm-deposit?data=${confirmToken}`,
                 linkPc: `${APP_DOMAIN}/api/admin/confirm-deposit?data=${confirmToken}`
               },
               {
-                buttonType: 'WL',
+                buttonType: 'AL',
                 buttonName: '수강권 발급 완료',
+                linkAnd: `${APP_DOMAIN}/api/admin/complete-purchase?data=${completeToken}`,
+                linkIos: `${APP_DOMAIN}/api/admin/complete-purchase?data=${completeToken}`,
                 linkMo: `${APP_DOMAIN}/api/admin/complete-purchase?data=${completeToken}`,
                 linkPc: `${APP_DOMAIN}/api/admin/complete-purchase?data=${completeToken}`
               }
@@ -108,8 +112,10 @@ export async function POST(request: Request) {
 
             payload.message.kakaoOptions.buttons = [
               {
-                buttonType: 'WL',
+                buttonType: 'AL',
                 buttonName: '재설정 처리 완료',
+                linkAnd: `${APP_DOMAIN}/api/admin/complete-pin-change?data=${pinChangeToken}`,
+                linkIos: `${APP_DOMAIN}/api/admin/complete-pin-change?data=${pinChangeToken}`,
                 linkMo: `${APP_DOMAIN}/api/admin/complete-pin-change?data=${pinChangeToken}`,
                 linkPc: `${APP_DOMAIN}/api/admin/complete-pin-change?data=${pinChangeToken}`
               }

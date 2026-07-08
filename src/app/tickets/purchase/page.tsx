@@ -91,7 +91,7 @@ export default function PurchasePage() {
           realName: pRealName,
           nickname: pNickname,
           phoneNumber: pPhone,
-          productName: selectedProduct ? `${selectedProduct.name} (${selectedProduct.price.toLocaleString()}원)` : '',
+          productName: selectedProduct ? selectedProduct.name : '',
           productId: selectedProductId,
           price: selectedProduct?.price || 0,
           depositor: pDepositor,
