@@ -21,7 +21,7 @@ export default function TicketsMenuPage() {
           </div>
           <p className="sch-notice">
             횟수권 잔여 확인, 구입, 조회코드 변경 신청이 가능합니다.<br />
-            카드결제는 현장에서 부탁드립니다. (8월 이후 가능)
+            카드결제는 현장에서 부탁드립니다.
           </p>
         </div>
 
@@ -65,7 +65,7 @@ export default function TicketsMenuPage() {
               </div>
               <div className="text-content">
                 <span className="action-title">조회코드 변경</span>
-                <span className="action-subtitle">로그인용 4자리 PIN 코드 설정 신청</span>
+                <span className="action-subtitle">조회용 4자리 PIN코드 변경 신청</span>
               </div>
             </div>
             <ChevronRight size={18} strokeWidth={2} className="arrow" />

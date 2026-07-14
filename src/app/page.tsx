@@ -24,6 +24,9 @@ export default function HomePage() {
               </div>
               <div className="text-content">
                 <span className="action-title">{'예약하기'}</span>
+                <span className="action-subtitle">
+                  {'개인레슨용'}
+                </span>
               </div>
             </div>
             <ChevronRight size={18} strokeWidth={2} className="arrow" />
@@ -37,7 +40,7 @@ export default function HomePage() {
               <div className="text-content">
                 <span className="action-title">{'운영 시간표 확인'}</span>
                 <span className="action-subtitle">
-                  {'미쿠/아유미 센세'}
+                  {'개인레슨용'}
                 </span>
               </div>
             </div>
@@ -52,7 +55,7 @@ export default function HomePage() {
               <div className="text-content">
                 <span className="action-title">{'횟수권'}</span>
                 <span className="action-subtitle">
-                  {'잔여 확인, 구입, 조회코드 변경'}
+                  {'개인레슨/그룹레슨 공통'}
                 </span>
               </div>
             </div>
