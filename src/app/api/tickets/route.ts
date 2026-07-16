@@ -85,16 +85,19 @@ export async function POST(request: Request) {
           date: '2026-07-03',
           time: '15:00 - 16:00',
           tutor: '미쿠',
+          ticketName: '55분 개인수업',
         },
         {
           date: '2026-06-30',
           time: '13:00 - 14:00',
           tutor: '아유미',
+          ticketName: '85분 개인수업',
         },
         {
           date: '2026-06-25',
           time: '16:00 - 17:00',
           tutor: '미쿠',
+          ticketName: '55분 개인수업',
         },
       ];
 
@@ -202,6 +205,7 @@ export async function POST(request: Request) {
           date: row[2] || '',
           time: row[3] || '',
           tutor: row[4] || '',
+          ticketName: row[6] || '',
         }));
 
       // Sort by date descending (newest first)

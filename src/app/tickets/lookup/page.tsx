@@ -8,6 +8,7 @@ interface ClassHistoryItem {
   date: string;
   time: string;
   tutor: string;
+  ticketName?: string;
 }
 
 interface TicketInfo {
@@ -48,6 +49,15 @@ function getDDayString(expiryStr: string): string | null {
   } else {
     return '만료';
   }
+}
+
+function formatMonthDay(dateStr: string): string {
+  const cleanStr = dateStr.replace(/\./g, '-').trim();
+  const match = cleanStr.match(/^\d{4}-(\d{2})-(\d{2})$/);
+  if (!match) return dateStr;
+  const month = parseInt(match[1], 10);
+  const day = parseInt(match[2], 10);
+  return `${month}월 ${day}일`;
 }
 
 export default function LookupPage() {
@@ -347,24 +357,53 @@ export default function LookupPage() {
                       <div className="history-empty">수업 이력이 없습니다.</div>
                     ) : (
                       <div className="history-timeline">
-                        {ticketData.history.slice(0, 30).map((item, idx) => {
-                          const displayedCount = Math.min(ticketData.history!.length, 30);
-                          return (
-                            <div key={idx} className="timeline-item">
-                              <div className="timeline-badge-col">
-                                <div className="timeline-badge" />
-                                {idx < displayedCount - 1 && <div className="timeline-line" />}
-                              </div>
-                              <div className="timeline-content">
-                                <div className="timeline-meta">
-                                  <span className="class-date">{item.date}</span>
-                                  <span className="class-time">{item.time}</span>
-                                  <span className="class-tutor-badge">{item.tutor} 센세</span>
-                                </div>
+                        {(() => {
+                          const items = ticketData.history.slice(0, 30);
+                          // Group by year
+                          const groups: { year: string; list: typeof items }[] = [];
+                          items.forEach(item => {
+                            const year = item.date.split('-')[0] || '기타';
+                            const lastGroup = groups[groups.length - 1];
+                            if (lastGroup && lastGroup.year === year) {
+                              lastGroup.list.push(item);
+                            } else {
+                              groups.push({ year, list: [item] });
+                            }
+                          });
+
+                          return groups.map((group, gIdx) => (
+                            <div key={gIdx} className="history-year-group">
+                              <div className="history-year-title">{group.year}년</div>
+                              <div className="history-year-list">
+                                {group.list.map((item, idx) => {
+                                  const isLastOfGroup = idx === group.list.length - 1;
+                                  const isLastOverall = gIdx === groups.length - 1 && isLastOfGroup;
+                                  return (
+                                    <div key={idx} className="timeline-item">
+                                      <div className="timeline-badge-col">
+                                        <div className="timeline-badge" />
+                                        {!isLastOverall && <div className="timeline-line" />}
+                                      </div>
+                                      <div className="timeline-content">
+                                        <div className="timeline-meta">
+                                          <span className="class-date">{formatMonthDay(item.date)}</span>
+                                          <span className="class-time">{item.time}</span>
+                                          <span className="class-tutor-badge">{item.tutor} 센세</span>
+                                        </div>
+                                        {item.ticketName && (
+                                          <div className="timeline-ticket-info">
+                                            <span className="ticket-label">수강권</span>
+                                            <span className="ticket-value">{item.ticketName}</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
-                          );
-                        })}
+                          ));
+                        })()}
                       </div>
                     )}
                   </div>

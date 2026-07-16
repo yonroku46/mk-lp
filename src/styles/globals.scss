@@ -811,15 +811,41 @@ main {
           flex-direction: column;
           position: relative;
 
+          .history-year-group {
+            margin-bottom: 20px;
+
+            &:last-of-type {
+              margin-bottom: 0;
+
+              .history-year-list .timeline-item:last-of-type {
+                margin-bottom: 0;
+              }
+            }
+
+            .history-year-title {
+              font-size: 0.8125rem;
+              font-weight: 700;
+              color: var(--text-primary);
+              background: var(--bg);
+              border: 1px solid var(--border);
+              padding: 3px 10px;
+              border-radius: 10px;
+              display: inline-block;
+              margin-bottom: 12px;
+              letter-spacing: -0.02em;
+            }
+
+            .history-year-list {
+              display: flex;
+              flex-direction: column;
+            }
+          }
+
           .timeline-item {
             display: flex;
             gap: 12px;
             margin-bottom: 14px;
             animation: fadeIn 0.3s ease-out;
-
-            &:last-of-type {
-              margin-bottom: 0;
-            }
 
             .timeline-badge-col {
               display: flex;
@@ -876,6 +902,31 @@ main {
                   border-radius: 6px;
                   font-weight: 700;
                   margin-left: auto;
+                }
+              }
+
+              .timeline-ticket-info {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+                margin-top: 2px;
+                
+                .ticket-label {
+                  background-color: var(--bg);
+                  color: var(--text-secondary);
+                  padding: 1px 4px;
+                  border-radius: 4px;
+                  font-size: 0.625rem;
+                  font-weight: 700;
+                  border: 1px solid var(--border);
+                  line-height: 1;
+                }
+                
+                .ticket-value {
+                  font-weight: 500;
+                  color: var(--text-primary);
                 }
               }
             }
