@@ -65,18 +65,28 @@ export async function POST(request: Request) {
           remaining: 3,
           total: 10,
           expiry: '2026-07-20',
+          purchaseDate: '2026-01-15',
         },
         {
           ticketName: 'JLPT N2 대비 속성반 5회권',
-          remaining: 2,
+          remaining: 0,
           total: 5,
-          expiry: '2026-08-15',
+          expiry: '2026-06-30',
+          purchaseDate: '2026-03-01',
         },
         {
           ticketName: '시사 토론 및 청해 20회권',
           remaining: 18,
           total: 20,
           expiry: '2026-10-05',
+          purchaseDate: '2026-04-10',
+        },
+        {
+          ticketName: 'JLPT N3 입문반 10회권',
+          remaining: 0,
+          total: 10,
+          expiry: '2025-11-20',
+          purchaseDate: '2025-05-10',
         }
       ];
 
@@ -85,19 +95,25 @@ export async function POST(request: Request) {
           date: '2026-07-03',
           time: '15:00 - 16:00',
           tutor: '미쿠',
-          ticketName: '55분 개인수업',
+          ticketName: '비즈니스 일본어 회화 10회권',
         },
         {
           date: '2026-06-30',
           time: '13:00 - 14:00',
           tutor: '아유미',
-          ticketName: '85분 개인수업',
+          ticketName: 'JLPT N2 대비 속성반 5회권',
         },
         {
           date: '2026-06-25',
           time: '16:00 - 17:00',
           tutor: '미쿠',
-          ticketName: '55분 개인수업',
+          ticketName: '비즈니스 일본어 회화 10회권',
+        },
+        {
+          date: '2025-10-15',
+          time: '14:00 - 15:00',
+          tutor: '사쿠라',
+          ticketName: 'JLPT N3 입문반 10회권',
         },
       ];
 
@@ -179,12 +195,15 @@ export async function POST(request: Request) {
           const rowNickname = row[1] || '';
           return rowNickname.toLowerCase() === studentNickname.toLowerCase();
         })
-        .map(row => ({
+        .map((row, idx) => ({
           ticketName: row[2] || '',
           remaining: Number(row[3]) || 0,
           total: Number(row[4]) || 0,
           expiry: row[5] || '기한 없음',
-        }));
+          purchaseDate: row[6] || '',
+          csvIndex: idx,
+        }))
+        .reverse();
     }
 
     // 3. Parse History (Sheet 3)

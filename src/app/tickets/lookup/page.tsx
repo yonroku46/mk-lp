@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, Eye, EyeOff } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Eye, EyeOff, X, Filter } from 'lucide-react';
 
 interface ClassHistoryItem {
   date: string;
@@ -16,6 +16,8 @@ interface TicketInfo {
   remaining: number;
   total: number;
   expiry: string;
+  purchaseDate?: string;
+  csvIndex?: number;
 }
 
 interface StudentTicket {
@@ -51,6 +53,54 @@ function getDDayString(expiryStr: string): string | null {
   }
 }
 
+function isTicketExpired(ticket: TicketInfo): boolean {
+  if (ticket.remaining <= 0) return true;
+  const dDay = getDDayString(ticket.expiry);
+  return dDay === '만료';
+}
+
+function getTicketYear(ticket: TicketInfo): string {
+  const dateStr = ticket.purchaseDate || ticket.expiry || '';
+  const cleanStr = dateStr.replace(/\./g, '-').trim();
+  const match = cleanStr.match(/^(\d{4})/);
+  return match ? match[1] : '기타';
+}
+
+/**
+ * 3가지 조건 (수강권 명칭, 구입일자, 유효기간) 정밀 판별 함수
+ */
+function isHistoryMatchSelectedTicket(historyItem: ClassHistoryItem, selectedTicket: TicketInfo): boolean {
+  if (!historyItem || !selectedTicket) return false;
+
+  // 1. 수강권 명칭 (ticketName) 검증
+  if (historyItem.ticketName) {
+    const hName = historyItem.ticketName.trim().toLowerCase();
+    const tName = selectedTicket.ticketName.trim().toLowerCase();
+    const isNameMatched = hName === tName || hName.includes(tName) || tName.includes(hName);
+    if (!isNameMatched) return false;
+  }
+
+  const hDateStr = historyItem.date.replace(/\./g, '-').trim();
+
+  // 2. 등록일자 / 구입일자 (purchaseDate) 검증 (수업일자 >= 구입일자)
+  if (selectedTicket.purchaseDate) {
+    const pDateStr = selectedTicket.purchaseDate.replace(/\./g, '-').trim();
+    if (hDateStr < pDateStr) {
+      return false;
+    }
+  }
+
+  // 3. 유효기간 (expiry) 검증 (수업일자 <= 유효기간)
+  if (selectedTicket.expiry && selectedTicket.expiry !== '기한 없음') {
+    const eDateStr = selectedTicket.expiry.replace(/\./g, '-').trim();
+    if (hDateStr > eDateStr) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function formatMonthDay(dateStr: string): string {
   const cleanStr = dateStr.replace(/\./g, '-').trim();
   const match = cleanStr.match(/^\d{4}-(\d{2})-(\d{2})$/);
@@ -70,10 +120,19 @@ export default function LookupPage() {
   const [ticketData, setTicketData] = useState<StudentTicket | null>(null);
   const [activeTab, setActiveTab] = useState<'ticket' | 'history'>('ticket');
   const [currentTicketIndex, setCurrentTicketIndex] = useState(0);
+  const [showExpiredTickets, setShowExpiredTickets] = useState(false);
+  const [selectedTicketFilter, setSelectedTicketFilter] = useState<TicketInfo | null>(null);
+  const [onlyShowMatchedHistory, setOnlyShowMatchedHistory] = useState<boolean>(true);
 
   const nameInputRef = useRef<HTMLInputElement>(null);
   const nicknameInputRef = useRef<HTMLInputElement>(null);
   const pinInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSelectTicketFilter = (ticket: TicketInfo) => {
+    setSelectedTicketFilter(ticket);
+    setOnlyShowMatchedHistory(true);
+    setActiveTab('history');
+  };
 
   // Auto-fill and auto-focus for lookup view
   useEffect(() => {
@@ -131,12 +190,17 @@ export default function LookupPage() {
       });
       setActiveTab('ticket');
       setCurrentTicketIndex(0);
+      setShowExpiredTickets(false);
     } catch (err) {
       setSearchError('데이터를 조회하는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
     } finally {
       setSearchLoading(false);
     }
   };
+
+  const allTickets = ticketData?.tickets || [];
+  const activeTickets = allTickets.filter(t => !isTicketExpired(t));
+  const expiredTickets = allTickets.filter(t => isTicketExpired(t));
 
   return (
     <main>
@@ -247,14 +311,23 @@ export default function LookupPage() {
               </div>
 
               {activeTab === 'ticket' ? (
-                /* Slide Carousel */
+                /* Slide Carousel (Active Tickets only) */
                 <div className="sch-carousel-container">
-                  {!ticketData.tickets || ticketData.tickets.length === 0 ? (
-                    <div className="ticket-empty">수강권 정보가 없습니다.</div>
+                  {activeTickets.length === 0 ? (
+                    <div className="ticket-empty">
+                      <p style={{ fontWeight: 600, fontSize: '15px', color: '#64748b', margin: '0 0 6px 0' }}>
+                        현재 이용 가능한 수강권이 없습니다.
+                      </p>
+                      {expiredTickets.length > 0 && (
+                        <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0 }}>
+                          아래 지난 수강권 내역에서 만료/소진된 수강권을 확인할 수 있습니다.
+                        </p>
+                      )}
+                    </div>
                   ) : (
                     <>
                       <div className="sch-carousel-wrapper">
-                        {ticketData.tickets.length > 1 && (
+                        {activeTickets.length > 1 && (
                           <button
                             type="button"
                             className="carousel-nav-btn prev"
@@ -271,12 +344,17 @@ export default function LookupPage() {
                             className="sch-carousel-track"
                             style={{ transform: `translateX(-${currentTicketIndex * 100}%)` }}
                           >
-                            {ticketData.tickets.map((ticket, idx) => {
+                            {activeTickets.map((ticket, idx) => {
                               const ticketDDay = getDDayString(ticket.expiry);
                               const themeClass = `theme-${idx % 3}`;
                               return (
                                 <div key={idx} className="sch-carousel-slide">
-                                  <div className={`sch-ticket-card ${themeClass}`}>
+                                  <div 
+                                    className={`sch-ticket-card ${themeClass}`}
+                                    onClick={() => handleSelectTicketFilter(ticket)}
+                                    style={{ cursor: 'pointer' }}
+                                    title="클릭하여 이 수강권에 해당하는 수업 이력 보기"
+                                  >
                                     <div className="ticket-header">
                                       <span className="student-name">{ticketData.name} 님</span>
                                       <span className="ticket-badge">{ticket.ticketName}</span>
@@ -304,7 +382,9 @@ export default function LookupPage() {
 
                                     <div className="ticket-footer">
                                       <span>유효기간: {ticket.expiry}{ticketDDay ? ` (${ticketDDay})` : ''}</span>
-                                      <span>실시간 기준</span>
+                                      <span className="card-footer-arrow">
+                                        <ChevronRight size={16} />
+                                      </span>
                                     </div>
                                   </div>
                                 </div>
@@ -313,12 +393,12 @@ export default function LookupPage() {
                           </div>
                         </div>
 
-                        {ticketData.tickets.length > 1 && (
+                        {activeTickets.length > 1 && (
                           <button
                             type="button"
                             className="carousel-nav-btn next"
-                            onClick={() => setCurrentTicketIndex(prev => Math.min(ticketData.tickets.length - 1, prev + 1))}
-                            disabled={currentTicketIndex === ticketData.tickets.length - 1}
+                            onClick={() => setCurrentTicketIndex(prev => Math.min(activeTickets.length - 1, prev + 1))}
+                            disabled={currentTicketIndex === activeTickets.length - 1}
                             aria-label="다음 수강권"
                           >
                             <ChevronRight size={20} />
@@ -326,9 +406,9 @@ export default function LookupPage() {
                         )}
                       </div>
 
-                      {ticketData.tickets.length > 1 && (
+                      {activeTickets.length > 1 && (
                         <div className="carousel-dots">
-                          {ticketData.tickets.map((_, dotIdx) => (
+                          {activeTickets.map((_, dotIdx) => (
                             <button
                               key={dotIdx}
                               type="button"
@@ -346,42 +426,124 @@ export default function LookupPage() {
                 /* Timeline History */
                 <div className="sch-history-section">
                   <div className="history-header">
-                    <span className="history-title">수업 이력 (최근 30회까지 표시)</span>
+                    <span className="history-title">
+                      {selectedTicketFilter ? '선택한 수강권의 수업 이력' : '수업 이력 (최근 30회까지 표시)'}
+                    </span>
                     {ticketData.history && ticketData.history.length > 0 && (
-                      <span className="history-count">총 {ticketData.history.length}회 수강</span>
+                      <span className="history-count">
+                        {selectedTicketFilter 
+                          ? `매칭된 수업 ${ticketData.history.filter(h => isHistoryMatchSelectedTicket(h, selectedTicketFilter)).length}회`
+                          : `총 ${ticketData.history.length}회 수강`}
+                      </span>
                     )}
                   </div>
+
+                  {/* Active Filter Banner (Distinct Deep Purple Capsule) */}
+                  {selectedTicketFilter && (
+                    <div className="history-filter-banner">
+                      <div className="filter-chip-info">
+                        <div className="filter-chip-header">
+                          <Filter size={11} />
+                          <span className="filter-chip-name">{selectedTicketFilter.ticketName}</span>
+                        </div>
+                        {selectedTicketFilter.purchaseDate && (
+                          <div className="filter-chip-date">
+                            {selectedTicketFilter.purchaseDate} ~ {selectedTicketFilter.expiry}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="filter-chip-right">
+                        <button
+                          type="button"
+                          className={`filter-mode-pill ${onlyShowMatchedHistory ? 'active' : ''}`}
+                          onClick={() => setOnlyShowMatchedHistory(!onlyShowMatchedHistory)}
+                          title="보기 방식 전환"
+                        >
+                          {onlyShowMatchedHistory ? '해당 수업만' : '전체 강조'}
+                        </button>
+                        <button
+                          type="button"
+                          className="filter-chip-remove"
+                          onClick={() => setSelectedTicketFilter(null)}
+                          aria-label="필터 해제"
+                          title="필터 해제"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                   
                   <div className="history-timeline-container">
-                    {!ticketData.history || ticketData.history.length === 0 ? (
-                      <div className="history-empty">수업 이력이 없습니다.</div>
-                    ) : (
-                      <div className="history-timeline">
-                        {(() => {
-                          const items = ticketData.history.slice(0, 30);
-                          // Group by year
-                          const groups: { year: string; list: typeof items }[] = [];
-                          items.forEach(item => {
-                            const year = item.date.split('-')[0] || '기타';
-                            const lastGroup = groups[groups.length - 1];
-                            if (lastGroup && lastGroup.year === year) {
-                              lastGroup.list.push(item);
-                            } else {
-                              groups.push({ year, list: [item] });
-                            }
-                          });
+                    {(() => {
+                      const allHistory = ticketData.history || [];
+                      const matchedHistory = selectedTicketFilter
+                        ? allHistory.filter(item => isHistoryMatchSelectedTicket(item, selectedTicketFilter))
+                        : allHistory;
 
-                          return groups.map((group, gIdx) => (
+                      const historyToDisplay = (selectedTicketFilter && onlyShowMatchedHistory)
+                        ? matchedHistory
+                        : allHistory;
+
+                      if (historyToDisplay.length === 0) {
+                        return (
+                          <div className="history-empty">
+                            {selectedTicketFilter ? (
+                              <>
+                                <p style={{ margin: '0 0 6px 0', fontWeight: 600 }}>
+                                  선택하신 &quot;{selectedTicketFilter.ticketName}&quot; 수강권(구입일: {selectedTicketFilter.purchaseDate || '미상'}, 유효기간: {selectedTicketFilter.expiry})에 해당하는 수업 이력이 없습니다.
+                                </p>
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedTicketFilter(null)}
+                                  style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#af52de',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                    fontSize: '13px',
+                                    textDecoration: 'underline',
+                                  }}
+                                >
+                                  전체 수업 이력 보기
+                                </button>
+                              </>
+                            ) : (
+                              '수업 이력이 없습니다.'
+                            )}
+                          </div>
+                        );
+                      }
+
+                      const items = historyToDisplay.slice(0, 30);
+                      const groups: { year: string; list: typeof items }[] = [];
+                      items.forEach(item => {
+                        const year = item.date.split('-')[0] || '기타';
+                        const lastGroup = groups[groups.length - 1];
+                        if (lastGroup && lastGroup.year === year) {
+                          lastGroup.list.push(item);
+                        } else {
+                          groups.push({ year, list: [item] });
+                        }
+                      });
+
+                      return (
+                        <div className="history-timeline">
+                          {groups.map((group, gIdx) => (
                             <div key={gIdx} className="history-year-group">
                               <div className="history-year-title">{group.year}년</div>
                               <div className="history-year-list">
                                 {group.list.map((item, idx) => {
                                   const isLastOfGroup = idx === group.list.length - 1;
                                   const isLastOverall = gIdx === groups.length - 1 && isLastOfGroup;
+                                  const isMatched = selectedTicketFilter ? isHistoryMatchSelectedTicket(item, selectedTicketFilter) : false;
+
                                   return (
-                                    <div key={idx} className="timeline-item">
+                                    <div key={idx} className={`timeline-item ${isMatched ? 'accent-highlight' : ''}`}>
                                       <div className="timeline-badge-col">
-                                        <div className="timeline-badge" />
+                                        <div className={`timeline-badge ${isMatched ? 'accent' : ''}`} />
                                         {!isLastOverall && <div className="timeline-line" />}
                                       </div>
                                       <div className="timeline-content">
@@ -402,15 +564,89 @@ export default function LookupPage() {
                                 })}
                               </div>
                             </div>
-                          ));
-                        })()}
-                      </div>
-                    )}
+                          ))}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               )}
 
-              <Link href="/tickets" className="sch-btn-reset" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', marginTop: '8px' }}>
+              {/* Expired / Fully Used Tickets Accordion Section (Active Tab only) */}
+              {activeTab === 'ticket' && expiredTickets.length > 0 && (
+                <div className="expired-tickets-container">
+                  <button
+                    type="button"
+                    className={`expired-tickets-toggle ${showExpiredTickets ? 'expanded' : ''}`}
+                    onClick={() => setShowExpiredTickets(prev => !prev)}
+                    aria-expanded={showExpiredTickets}
+                  >
+                    <span className="toggle-title">
+                      지난 수강권 내역 <span className="count-badge">{expiredTickets.length}</span>
+                    </span>
+                    {showExpiredTickets ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  </button>
+
+                  {showExpiredTickets && (
+                    <div className="expired-tickets-list">
+                      {(() => {
+                        const groups: { year: string; list: typeof expiredTickets }[] = [];
+                        expiredTickets.forEach(ticket => {
+                          const year = getTicketYear(ticket);
+                          const lastGroup = groups[groups.length - 1];
+                          if (lastGroup && lastGroup.year === year) {
+                            lastGroup.list.push(ticket);
+                          } else {
+                            groups.push({ year, list: [ticket] });
+                          }
+                        });
+
+                        return groups.map((group, gIdx) => (
+                          <div key={gIdx} className="expired-year-group">
+                            <div className="expired-year-title">{group.year === '기타' ? '기타' : `${group.year}년`}</div>
+                            <div className="expired-year-list">
+                              {group.list.map((ticket, idx) => {
+                                const formattedExpiry = formatMonthDay(ticket.expiry);
+                                const isFullyUsed = ticket.remaining <= 0;
+                                const badgeText = isFullyUsed 
+                                  ? (formattedExpiry && formattedExpiry !== '기한 없음' ? `${formattedExpiry} 소진 완료` : '소진 완료')
+                                  : (formattedExpiry && formattedExpiry !== '기한 없음' ? `${formattedExpiry} 만료` : '유효기간 만료');
+
+                                return (
+                                  <div 
+                                    key={idx} 
+                                    className="expired-ticket-item clickable"
+                                    onClick={() => handleSelectTicketFilter(ticket)}
+                                    title="클릭하여 이 수강권에 해당하는 수업 이력 보기"
+                                  >
+                                    <div className="expired-item-main">
+                                      <div className="expired-item-header">
+                                        <span className="expired-item-name">{ticket.ticketName}</span>
+                                        <span className={`expired-status-badge ${isFullyUsed ? 'used' : 'expired'}`}>
+                                          {badgeText}
+                                        </span>
+                                      </div>
+                                      <div className="expired-item-meta">
+                                        <span>잔여 {ticket.remaining}회 / 총 {ticket.total}회</span>
+                                        <span>구입일: {ticket.purchaseDate || '기록 없음'}</span>
+                                      </div>
+                                    </div>
+                                    <div className="expired-item-arrow">
+                                      <ChevronRight size={18} />
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <Link href="/tickets" className="sch-btn-reset" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', marginTop: '12px' }}>
                 이전으로
               </Link>
             </div>
