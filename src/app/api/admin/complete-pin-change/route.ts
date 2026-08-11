@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { verifyAdminPasscode } from '@/common/utils/adminAuth';
 
 const SOLAPI_API_KEY = process.env.SOLAPI_API_KEY || '';
 const SOLAPI_API_SECRET = process.env.SOLAPI_API_SECRET || '';
 const SOLAPI_SENDER_NUMBER = process.env.SOLAPI_SENDER_NUMBER || '';
 const SOLAPI_PF_ID = process.env.SOLAPI_PF_ID || '';
 const SOLAPI_TEMPLATE_ID_PIN_COMPLETE = process.env.SOLAPI_TEMPLATE_ID_PIN_COMPLETE || '';
-
-const ADMIN_PASSCODE = '0607';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -40,7 +39,7 @@ export async function GET(request: Request) {
   }
 
   // 인증코드가 없거나 올바르지 않으면 인증 대기 화면을 보여줌
-  if (code !== ADMIN_PASSCODE) {
+  if (!verifyAdminPasscode(code)) {
     const isError = code.length > 0;
     return new NextResponse(
       renderAuthHtml(realName, newPin, isError),

@@ -4,6 +4,7 @@ import { useMemo, useState, Fragment } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
+import AdminExhaustedModal from './AdminExhaustedModal';
 
 interface TimeSlot {
   day: number;
@@ -40,6 +41,28 @@ const fmt = (h: number, m: number) =>
 export default function SchedulePage() {
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
+
+  // Easter egg state for Admin Modal (Triple tap on Sunday header)
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [sundayTapCount, setSundayTapCount] = useState(0);
+  const [lastSundayTapTime, setLastSundayTapTime] = useState(0);
+
+  const handleSundayHeaderTap = () => {
+    const now = Date.now();
+    if (now - lastSundayTapTime < 1500) {
+      const newCount = sundayTapCount + 1;
+      setSundayTapCount(newCount);
+      if (newCount >= 3) {
+        setIsAdminModalOpen(true);
+        setSundayTapCount(0);
+        setLastSundayTapTime(0);
+        return;
+      }
+    } else {
+      setSundayTapCount(1);
+    }
+    setLastSundayTapTime(now);
+  };
 
   const tutors: Tutor[] = useMemo(() => [
     {
@@ -161,7 +184,12 @@ export default function SchedulePage() {
               <div
                 key={day}
                 className={`sch-day-header${di === 5 ? ' saturday' : di === 6 ? ' sunday' : ''}${hoveredCol === di ? ' highlighted' : ''}`}
-                style={{ gridRow: 1, gridColumn: di + 2 }}
+                style={{
+                  gridRow: 1,
+                  gridColumn: di + 2,
+                  userSelect: 'none'
+                }}
+                onClick={di === 6 ? handleSundayHeaderTap : undefined}
               >
                 {day}
               </div>
@@ -278,6 +306,11 @@ export default function SchedulePage() {
           </div>
         </div>
       </div>
+
+      <AdminExhaustedModal
+        isOpen={isAdminModalOpen}
+        onClose={() => setIsAdminModalOpen(false)}
+      />
     </main>
   );
 }

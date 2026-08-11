@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { verifyAdminPasscode } from '@/common/utils/adminAuth';
 
 const SOLAPI_API_KEY = process.env.SOLAPI_API_KEY || '';
 const SOLAPI_API_SECRET = process.env.SOLAPI_API_SECRET || '';
 const SOLAPI_SENDER_NUMBER = process.env.SOLAPI_SENDER_NUMBER || '';
 const SOLAPI_PF_ID = process.env.SOLAPI_PF_ID || '';
 const SOLAPI_TEMPLATE_ID_CONFIRM = process.env.SOLAPI_TEMPLATE_ID_CONFIRM || '';
-
-const ADMIN_PASSCODE = '0607';
 
 const BANK_ACCOUNT = '토스뱅크 1001-3926-0609';
 const BANK_OWNER = 'MATOBA MIKU';
@@ -50,7 +49,7 @@ export async function GET(request: Request) {
   const formattedPrice = isNaN(rawPrice) ? priceStr : rawPrice.toLocaleString();
 
   // 인증코드가 없거나 올바르지 않으면 인증 대기 화면을 보여줌
-  if (code !== ADMIN_PASSCODE) {
+  if (!verifyAdminPasscode(code)) {
     const isError = code.length > 0; // 뭔가 입력했는데 틀린 경우 에러메시지 표시용
     return new NextResponse(
       renderAuthHtml(realName, productName, formattedPrice, isError),
