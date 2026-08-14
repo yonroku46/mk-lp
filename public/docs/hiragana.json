@@ -1,0 +1,186 @@
+{
+  "あ": {
+    "romaji": "a",
+    "mnemonic": "아! 입 벌린 모습"
+  },
+  "い": {
+    "romaji": "i",
+    "mnemonic": "이빨 두 개"
+  },
+  "う": {
+    "romaji": "u",
+    "mnemonic": "우산 옆모습"
+  },
+  "え": {
+    "romaji": "e",
+    "mnemonic": "에비(새우)처럼"
+  },
+  "お": {
+    "romaji": "o",
+    "mnemonic": "오! 팔 벌린 사람"
+  },
+  "か": {
+    "romaji": "ka",
+    "mnemonic": "카메라 옆모습"
+  },
+  "き": {
+    "romaji": "ki",
+    "mnemonic": "키 재는 자"
+  },
+  "く": {
+    "romaji": "ku",
+    "mnemonic": "쿠! 부리 모양"
+  },
+  "け": {
+    "romaji": "ke",
+    "mnemonic": "케이크 칼"
+  },
+  "こ": {
+    "romaji": "ko",
+    "mnemonic": "코 두 줄"
+  },
+  "さ": {
+    "romaji": "sa",
+    "mnemonic": "사람이 앉은 모습"
+  },
+  "し": {
+    "romaji": "shi",
+    "mnemonic": "시소 한쪽"
+  },
+  "す": {
+    "romaji": "su",
+    "mnemonic": "스프링처럼 빙글"
+  },
+  "せ": {
+    "romaji": "se",
+    "mnemonic": "세탁기 옆모습"
+  },
+  "そ": {
+    "romaji": "so",
+    "mnemonic": "소용돌이 낚싯줄"
+  },
+  "た": {
+    "romaji": "ta",
+    "mnemonic": "타조처럼 쭉"
+  },
+  "ち": {
+    "romaji": "chi",
+    "mnemonic": "치약 튜브"
+  },
+  "つ": {
+    "romaji": "tsu",
+    "mnemonic": "츠! 웃는 입"
+  },
+  "て": {
+    "romaji": "te",
+    "mnemonic": "테이블 위"
+  },
+  "と": {
+    "romaji": "to",
+    "mnemonic": "토끼 귀"
+  },
+  "な": {
+    "romaji": "na",
+    "mnemonic": "나뭇가지"
+  },
+  "に": {
+    "romaji": "ni",
+    "mnemonic": "니은(ㄴ) 두 개"
+  },
+  "ぬ": {
+    "romaji": "nu",
+    "mnemonic": "누에가 꼬인 모습"
+  },
+  "ね": {
+    "romaji": "ne",
+    "mnemonic": "네모난 올가미"
+  },
+  "の": {
+    "romaji": "no",
+    "mnemonic": "노끈이 빙글"
+  },
+  "は": {
+    "romaji": "ha",
+    "mnemonic": "하! 웃는 얼굴"
+  },
+  "ひ": {
+    "romaji": "hi",
+    "mnemonic": "히히 웃는 입"
+  },
+  "ふ": {
+    "romaji": "fu",
+    "mnemonic": "후~ 입김"
+  },
+  "へ": {
+    "romaji": "he",
+    "mnemonic": "헤엄치는 산"
+  },
+  "ほ": {
+    "romaji": "ho",
+    "mnemonic": "호수에 나무"
+  },
+  "ま": {
+    "romaji": "ma",
+    "mnemonic": "마차처럼 생김"
+  },
+  "み": {
+    "romaji": "mi",
+    "mnemonic": "미소 짓는 입"
+  },
+  "む": {
+    "romaji": "mu",
+    "mnemonic": "무시(벌레)"
+  },
+  "め": {
+    "romaji": "me",
+    "mnemonic": "메기 눈"
+  },
+  "も": {
+    "romaji": "mo",
+    "mnemonic": "모자"
+  },
+  "や": {
+    "romaji": "ya",
+    "mnemonic": "야! 팔 벌림"
+  },
+  "ゆ": {
+    "romaji": "yu",
+    "mnemonic": "유턴하는 길"
+  },
+  "よ": {
+    "romaji": "yo",
+    "mnemonic": "요요 줄"
+  },
+  "ら": {
+    "romaji": "ra",
+    "mnemonic": "라면 젓가락"
+  },
+  "り": {
+    "romaji": "ri",
+    "mnemonic": "리본 두 가닥"
+  },
+  "る": {
+    "romaji": "ru",
+    "mnemonic": "루프 달린 고리"
+  },
+  "れ": {
+    "romaji": "re",
+    "mnemonic": "레일이 휘어짐"
+  },
+  "ろ": {
+    "romaji": "ro",
+    "mnemonic": "로봇 팔"
+  },
+  "わ": {
+    "romaji": "wa",
+    "mnemonic": "와! 입 벌림"
+  },
+  "を": {
+    "romaji": "wo",
+    "mnemonic": "오! 고리와 꼬리"
+  },
+  "ん": {
+    "romaji": "n",
+    "mnemonic": "응? 고개 갸웃"
+  }
+}

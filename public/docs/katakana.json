@@ -1,0 +1,186 @@
+{
+  "ア": {
+    "romaji": "a",
+    "mnemonic": "아! 사람 팔"
+  },
+  "イ": {
+    "romaji": "i",
+    "mnemonic": "이빨 두 개"
+  },
+  "ウ": {
+    "romaji": "u",
+    "mnemonic": "우산"
+  },
+  "エ": {
+    "romaji": "e",
+    "mnemonic": "에어컨 옆모습"
+  },
+  "オ": {
+    "romaji": "o",
+    "mnemonic": "오! 사람"
+  },
+  "カ": {
+    "romaji": "ka",
+    "mnemonic": "카메라"
+  },
+  "キ": {
+    "romaji": "ki",
+    "mnemonic": "키 재는 자"
+  },
+  "ク": {
+    "romaji": "ku",
+    "mnemonic": "쿠! 부리"
+  },
+  "ケ": {
+    "romaji": "ke",
+    "mnemonic": "케이크 칼"
+  },
+  "コ": {
+    "romaji": "ko",
+    "mnemonic": "코 두 줄"
+  },
+  "サ": {
+    "romaji": "sa",
+    "mnemonic": "사다리 옆모습"
+  },
+  "シ": {
+    "romaji": "shi",
+    "mnemonic": "시소"
+  },
+  "ス": {
+    "romaji": "su",
+    "mnemonic": "스키 타는 사람"
+  },
+  "セ": {
+    "romaji": "se",
+    "mnemonic": "세면대 옆모습"
+  },
+  "ソ": {
+    "romaji": "so",
+    "mnemonic": "소! 낚싯줄"
+  },
+  "タ": {
+    "romaji": "ta",
+    "mnemonic": "타조 부리"
+  },
+  "チ": {
+    "romaji": "chi",
+    "mnemonic": "치즈 칼"
+  },
+  "ツ": {
+    "romaji": "tsu",
+    "mnemonic": "츠나미 물결"
+  },
+  "テ": {
+    "romaji": "te",
+    "mnemonic": "테이블"
+  },
+  "ト": {
+    "romaji": "to",
+    "mnemonic": "토끼 귀"
+  },
+  "ナ": {
+    "romaji": "na",
+    "mnemonic": "나뭇가지"
+  },
+  "ニ": {
+    "romaji": "ni",
+    "mnemonic": "니은 두 줄"
+  },
+  "ヌ": {
+    "romaji": "nu",
+    "mnemonic": "누에가 꼬임"
+  },
+  "ネ": {
+    "romaji": "ne",
+    "mnemonic": "네모 올가미"
+  },
+  "ノ": {
+    "romaji": "no",
+    "mnemonic": "노 젓는 모습"
+  },
+  "ハ": {
+    "romaji": "ha",
+    "mnemonic": "하! 벌어진 입"
+  },
+  "ヒ": {
+    "romaji": "hi",
+    "mnemonic": "히터 모양"
+  },
+  "フ": {
+    "romaji": "fu",
+    "mnemonic": "후~ 입김"
+  },
+  "ヘ": {
+    "romaji": "he",
+    "mnemonic": "헤엄치는 산"
+  },
+  "ホ": {
+    "romaji": "ho",
+    "mnemonic": "호수의 나무"
+  },
+  "マ": {
+    "romaji": "ma",
+    "mnemonic": "마차"
+  },
+  "ミ": {
+    "romaji": "mi",
+    "mnemonic": "미음(ㅁ)처럼 세 줄"
+  },
+  "ム": {
+    "romaji": "mu",
+    "mnemonic": "무시(벌레)"
+  },
+  "メ": {
+    "romaji": "me",
+    "mnemonic": "메기 눈"
+  },
+  "モ": {
+    "romaji": "mo",
+    "mnemonic": "모자"
+  },
+  "ヤ": {
+    "romaji": "ya",
+    "mnemonic": "야! 팔 벌림"
+  },
+  "ユ": {
+    "romaji": "yu",
+    "mnemonic": "유턴 길"
+  },
+  "ヨ": {
+    "romaji": "yo",
+    "mnemonic": "요요"
+  },
+  "ラ": {
+    "romaji": "ra",
+    "mnemonic": "라면 젓가락"
+  },
+  "リ": {
+    "romaji": "ri",
+    "mnemonic": "리본 두 가닥"
+  },
+  "ル": {
+    "romaji": "ru",
+    "mnemonic": "루프 고리"
+  },
+  "レ": {
+    "romaji": "re",
+    "mnemonic": "레일"
+  },
+  "ロ": {
+    "romaji": "ro",
+    "mnemonic": "로봇 입"
+  },
+  "ワ": {
+    "romaji": "wa",
+    "mnemonic": "와! 입 벌림"
+  },
+  "ヲ": {
+    "romaji": "wo",
+    "mnemonic": "오! 고리와 꼬리"
+  },
+  "ン": {
+    "romaji": "n",
+    "mnemonic": "응? 고개 갸웃"
+  }
+}

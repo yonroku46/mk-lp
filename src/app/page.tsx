@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link';
-import { ChevronRight, Clock, Calendar, Ticket, Info, InfoIcon } from 'lucide-react';
+import { ChevronRight, Clock, Calendar, Ticket, Book } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -56,6 +56,21 @@ export default function HomePage() {
                 <span className="action-title">{'횟수권'}</span>
                 <span className="action-subtitle">
                   {'개인레슨/그룹레슨 공통'}
+                </span>
+              </div>
+            </div>
+            <ChevronRight size={18} strokeWidth={2} className="arrow" />
+          </Link>
+
+          <Link href={'/benkyo'} className="action-button">
+            <div className="action-info">
+              <div className="icon-wrapper benkyo">
+                <Book size={24} strokeWidth={2} />
+              </div>
+              <div className="text-content">
+                <span className="action-title">{'기초연습'}</span>
+                <span className="action-subtitle">
+                  {'초보자를 위한 연습공간'}
                 </span>
               </div>
             </div>

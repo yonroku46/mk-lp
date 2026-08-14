@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-type MetadataType = 'home' | 'schedule' | 'tickets' | 'tickets-lookup' | 'tickets-purchase' | 'tickets-pin-change';
+type MetadataType = 'home' | 'schedule' | 'tickets' | 'benkyo' | 'tickets-lookup' | 'tickets-purchase' | 'tickets-pin-change';
 
 const APP_NAME = "스터디 예약";
 const APP_DESCRIPTION = "선생님과 학생의 더 효율적인 클래스 관리를 돕는 스마트 매니저";
@@ -18,6 +18,10 @@ const PAGE_INFO: Record<MetadataType, { title: string; description?: string }> =
   'tickets': {
     title: '횟수권 관리',
     description: '횟수권 조회, 구입, 비밀번호 변경을 관리합니다.'
+  },
+  'benkyo': {
+    title: '기초연습',
+    description: '초보자를 위한 연습공간'
   },
   'tickets-lookup': {
     title: '횟수권 잔여 확인',
