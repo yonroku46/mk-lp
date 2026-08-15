@@ -90,7 +90,7 @@ export default function BenkyoPage() {
   const [showCompleteModal, setShowCompleteModal] = useState<boolean>(false);
   
   // Navigation mode: show answer first when clicking next if checked
-  const [showAnswerFirst, setShowAnswerFirst] = useState<boolean>(false);
+  const [showAnswerFirst, setShowAnswerFirst] = useState<boolean>(true);
 
   // Grid sheet subtext toggle state: romaji -> korean -> none -> romaji
   const [gridSubMode, setGridSubMode] = useState<'romaji' | 'korean' | 'none'>('romaji');
@@ -158,6 +158,41 @@ export default function BenkyoPage() {
     return rawDeck.filter((item) => item.rowGroup === selectedRow);
   }, [rawDeck, selectedRow]);
 
+  // Structured Grid layout items for standard Japanese 50-on chart (5 columns)
+  // Handles empty slots for や행 (ya, _, yu, _, yo) and わ행 (wa, _, _, _, wo)
+  const gridItems = useMemo(() => {
+    const itemMap = new Map<string, KanaItem>();
+    rawDeck.forEach((item) => itemMap.set(item.romaji, item));
+
+    const standardLayout: (string | null)[] = [
+      'a', 'i', 'u', 'e', 'o',
+      'ka', 'ki', 'ku', 'ke', 'ko',
+      'sa', 'shi', 'su', 'se', 'so',
+      'ta', 'chi', 'tsu', 'te', 'to',
+      'na', 'ni', 'nu', 'ne', 'no',
+      'ha', 'hi', 'fu', 'he', 'ho',
+      'ma', 'mi', 'mu', 'me', 'mo',
+      'ya', null, 'yu', null, 'yo',
+      'ra', 'ri', 'ru', 're', 'ro',
+      'wa', null, null, null, 'wo',
+      'n', null, null, null, null,
+    ];
+
+    if (selectedRow === '전체') {
+      return standardLayout.map((romaji) => (romaji ? itemMap.get(romaji) || null : null));
+    }
+
+    if (selectedRow === 'や행') {
+      return ['ya', null, 'yu', null, 'yo'].map((r) => (r ? itemMap.get(r) || null : null));
+    }
+
+    if (selectedRow === 'わ행') {
+      return ['wa', null, null, null, 'wo', 'n', null, null, null, null].map((r) => (r ? itemMap.get(r) || null : null));
+    }
+
+    return filteredDeck;
+  }, [rawDeck, filteredDeck, selectedRow]);
+
   // Handle deck shuffling
   const currentDeck = useMemo(() => {
     if (!isShuffled) return filteredDeck;
@@ -179,21 +214,22 @@ export default function BenkyoPage() {
 
   const activeCard = currentDeck[currentIndex] || currentDeck[0];
 
-  // Play Audio Speech Synthesis with Japanese Voice Matching & 'ん' / 'ン' Fix
+  // Play Audio Speech Synthesis with Japanese Voice Matching & Natural Sustained Pronunciation
   const playAudio = useCallback((text: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
 
-      // Standalone nasal consonant 'ん' or 'ン' handling for Web Speech API
+      // Extend single Kana characters naturally using Japanese long vowel symbol 'ー'
+      // This prevents single morae from sounding too short/clipped in Web Speech API
       let speakText = text;
-      if (text === 'ん' || text === 'ン') {
-        speakText = text === 'ん' ? 'ん' : 'ン';
+      if (text.length === 1 && text !== 'っ' && text !== 'ッ') {
+        speakText = text + 'ー';
       }
 
       const utterance = new SpeechSynthesisUtterance(speakText);
       utterance.lang = 'ja-JP';
-      utterance.rate = 0.82; // Slightly clearer natural pace
+      utterance.rate = 0.78; // Slightly relaxed, clear educational pace
       utterance.pitch = 1.0;
 
       const voices = window.speechSynthesis.getVoices();
@@ -329,7 +365,7 @@ export default function BenkyoPage() {
               <Link href="/" className="sch-back-button" aria-label="이전 페이지로 이동">
                 <ChevronLeft size={24} />
               </Link>
-              <h1 className="sch-title">일본어 기초 연습</h1>
+              <h1 className="sch-title">기초연습</h1>
             </div>
           </div>
 
@@ -351,25 +387,24 @@ export default function BenkyoPage() {
           </button>
         </header>
 
-        {/* Mode Selector Tabs */}
-        <div className="benkyo-tab-group">
-          <button
-            className={`benkyo-tab ${mode === 'hiragana' ? 'active' : ''}`}
-            onClick={() => setMode('hiragana')}
-          >
-            히라가나
-          </button>
-          <button
-            className={`benkyo-tab ${mode === 'katakana' ? 'active' : ''}`}
-            onClick={() => setMode('katakana')}
-          >
-            카타카나
-          </button>
-        </div>
+        {/* Single-Row Zen Toolbar (Tabs + Row Dropdown + Mode Toggle + Shuffle) */}
+        <div className="benkyo-toolbar">
+          <div className="benkyo-tab-group">
+            <button
+              className={`benkyo-tab ${mode === 'hiragana' ? 'active' : ''}`}
+              onClick={() => setMode('hiragana')}
+            >
+              히라가나
+            </button>
+            <button
+              className={`benkyo-tab ${mode === 'katakana' ? 'active' : ''}`}
+              onClick={() => setMode('katakana')}
+            >
+              카타카나
+            </button>
+          </div>
 
-        {/* Minimalist Zen Utility Bar */}
-        <div className="benkyo-utility-bar">
-          <div className="utility-left">
+          <div className="toolbar-actions">
             <select
               className="row-select-dropdown"
               value={selectedRow}
@@ -381,38 +416,27 @@ export default function BenkyoPage() {
                 </option>
               ))}
             </select>
+
+            {viewMode === 'flashcard' && (
+              <>
+                <button
+                  className={`toolbar-icon-btn ${showAnswerFirst ? 'active' : ''}`}
+                  onClick={() => setShowAnswerFirst((prev) => !prev)}
+                  title={showAnswerFirst ? '확인 후 넘김 모드 (클릭하여 바로 넘김)' : '바로 넘김 모드 (클릭하여 확인 후 넘김)'}
+                >
+                  {showAnswerFirst ? <Eye size={15} /> : <Zap size={15} />}
+                </button>
+
+                <button
+                  className={`toolbar-icon-btn ${isShuffled ? 'active' : ''}`}
+                  onClick={handleShuffleToggle}
+                  title={isShuffled ? '순서대로 정열' : '카드 섞기'}
+                >
+                  <Shuffle size={15} />
+                </button>
+              </>
+            )}
           </div>
-
-          {viewMode === 'flashcard' && (
-            <div className="utility-right">
-              <div className="compact-segmented">
-                <button
-                  className={`compact-btn ${!showAnswerFirst ? 'active' : ''}`}
-                  onClick={() => setShowAnswerFirst(false)}
-                  title="바로 넘김 모드"
-                >
-                  <Zap size={13} />
-                  <span>바로 넘김</span>
-                </button>
-                <button
-                  className={`compact-btn ${showAnswerFirst ? 'active' : ''}`}
-                  onClick={() => setShowAnswerFirst(true)}
-                  title="확인 후 넘김 모드"
-                >
-                  <Eye size={13} />
-                  <span>확인 후 넘김</span>
-                </button>
-              </div>
-
-              <button
-                className={`compact-shuffle-btn ${isShuffled ? 'active' : ''}`}
-                onClick={handleShuffleToggle}
-                title={isShuffled ? '순서대로 정열' : '카드 섞기'}
-              >
-                <Shuffle size={14} />
-              </button>
-            </div>
-          )}
         </div>
 
         {viewMode === 'flashcard' ? (
@@ -523,21 +547,25 @@ export default function BenkyoPage() {
             </div>
 
             <div className="kana-chart-grid">
-              {filteredDeck.map((item) => (
-                <div
-                  key={item.char}
-                  className="chart-card"
-                  onClick={() => playAudio(item.char)}
-                  title={`${item.char} (${item.romaji}): ${item.mnemonic}`}
-                >
-                  <span className="chart-char">{item.char}</span>
-                  {gridSubMode !== 'none' && (
-                    <span className="chart-romaji">
-                      {gridSubMode === 'romaji' ? item.romaji : item.korean}
-                    </span>
-                  )}
-                </div>
-              ))}
+              {gridItems.map((item, idx) =>
+                item ? (
+                  <div
+                    key={item.char}
+                    className="chart-card"
+                    onClick={() => playAudio(item.char)}
+                    title={`${item.char} (${item.romaji}): ${item.mnemonic}`}
+                  >
+                    <span className="chart-char">{item.char}</span>
+                    {gridSubMode !== 'none' && (
+                      <span className="chart-romaji">
+                        {gridSubMode === 'romaji' ? item.romaji : item.korean}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div key={`empty-${idx}`} className="chart-card empty-card" aria-hidden="true" />
+                )
+              )}
             </div>
           </div>
         )}

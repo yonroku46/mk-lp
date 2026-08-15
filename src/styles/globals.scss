@@ -2021,7 +2021,6 @@ main {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 4px;
 
     .view-toggle-btn {
       display: flex;
@@ -2046,67 +2045,64 @@ main {
     }
   }
 
-  /* Mode Tabs */
-  .benkyo-tab-group {
-    width: 100%;
-    display: flex;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 3px;
-    border-radius: 14px;
-
-    .benkyo-tab {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 10px 14px;
-      border: none;
-      border-radius: 11px;
-      background: transparent;
-      font-size: 0.875rem;
-      font-weight: 700;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-
-      &.active {
-        background: #ffffff;
-        color: #0f93e0;
-        box-shadow: 0 3px 10px rgba(15, 147, 224, 0.12);
-      }
-    }
-  }
-
-  /* Minimalist Zen Utility Bar - Scaled for Clear Readability & Touch */
-  .benkyo-utility-bar {
+  /* Single-Row Zen Toolbar (Tabs + Row Dropdown + Single-Button Toggle + Shuffle) */
+  .benkyo-toolbar {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    padding: 4px 0;
-    margin-top: -7px;
-    background: transparent;
-    border: none;
-    box-shadow: none;
+    gap: 6px;
+    margin-bottom: 2px;
 
-    .utility-left {
+    .benkyo-tab-group {
+      display: flex;
+      background: rgba(0, 0, 0, 0.05);
+      padding: 2.5px;
+      border-radius: 12px;
+      flex-shrink: 0;
+
+      .benkyo-tab {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 6px 11px;
+        border: none;
+        border-radius: 9.5px;
+        background: transparent;
+        font-size: 0.8125rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        white-space: nowrap;
+
+        &.active {
+          background: #ffffff;
+          color: #0f93e0;
+          box-shadow: 0 2px 8px rgba(15, 147, 224, 0.12);
+        }
+      }
+    }
+
+    .toolbar-actions {
       display: flex;
       align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
 
       .row-select-dropdown {
         appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
-        padding: 6px 30px 6px 12px;
+        padding: 6px 26px 6px 10px;
         border-radius: 12px;
         border: 1px solid var(--border);
         background-color: var(--card-bg);
-        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
-        background-position: right 10px center;
-        background-size: 14px;
+        background-position: right 8px center;
+        background-size: 12px;
         font-size: 0.8125rem;
         font-weight: 700;
         color: var(--text-primary);
@@ -2127,54 +2123,8 @@ main {
           border-color: #c7c7cc;
         }
       }
-    }
 
-    .utility-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-
-      .compact-segmented {
-        display: flex;
-        align-items: center;
-        height: 34px;
-        box-sizing: border-box;
-        background: #f1f5f9;
-        padding: 3px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
-
-        .compact-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 5px;
-          height: 26px;
-          padding: 0 10px;
-          border-radius: 9px;
-          border: none;
-          background: transparent;
-          font-size: 0.75rem;
-          font-weight: 700;
-          color: var(--text-secondary);
-          cursor: pointer;
-          transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-          box-sizing: border-box;
-
-          &.active {
-            background: #ffffff;
-            color: #0f93e0;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-          }
-
-          &:hover:not(.active) {
-            color: var(--text-primary);
-          }
-        }
-      }
-
-      .compact-shuffle-btn {
+      .toolbar-icon-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -2198,6 +2148,10 @@ main {
         &:hover {
           color: #0f93e0;
           border-color: #c7c7cc;
+        }
+
+        &:active {
+          transform: scale(0.95);
         }
       }
     }
@@ -2323,9 +2277,11 @@ main {
 
   /* 3D Flashcard Container - Centered Vertically between Row Filter & Controls */
   .benkyo-card-scene {
-    width: 100%;
+    width: 80vw;
     max-width: 340px;
-    height: 500px;
+    height: 58vh;
+    height: 58dvh;
+    max-height: 500px;
     margin: auto 0;
     perspective: 1000px;
     cursor: pointer;
@@ -2753,7 +2709,15 @@ main {
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         position: relative;
-        overflow: hidden;
+        &.empty-card {
+          background: transparent;
+          border: 1px dashed rgba(200, 205, 215, 0.4);
+          cursor: default;
+          pointer-events: none;
+          box-shadow: none !important;
+          transform: none !important;
+          opacity: 0.3;
+        }
 
         &:hover {
           background: #ffffff;
