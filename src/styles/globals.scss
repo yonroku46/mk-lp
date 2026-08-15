@@ -2052,7 +2052,6 @@ main {
     align-items: center;
     justify-content: space-between;
     gap: 6px;
-    margin-bottom: 2px;
 
     .benkyo-tab-group {
       display: flex;
@@ -2400,8 +2399,7 @@ main {
           }
 
           .sub-pronunciation {
-            position: absolute;
-            bottom: 65px;
+            margin-top: 12px;
             display: flex;
             align-items: center;
             gap: 8px;

@@ -214,45 +214,26 @@ export default function BenkyoPage() {
 
   const activeCard = currentDeck[currentIndex] || currentDeck[0];
 
-  // Play Audio Speech Synthesis with Japanese Voice Matching & Natural Sustained Pronunciation
+  // Play Audio using ResponsiveVoice API (External non-Google audio service)
   const playAudio = useCallback((text: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
 
-      // Extend single Kana characters naturally using Japanese long vowel symbol 'ー'
-      // This prevents single morae from sounding too short/clipped in Web Speech API
-      let speakText = text;
-      if (text.length === 1 && text !== 'っ' && text !== 'ッ') {
-        speakText = text + 'ー';
+    try {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
       }
 
-      const utterance = new SpeechSynthesisUtterance(speakText);
-      utterance.lang = 'ja-JP';
-      utterance.rate = 0.78; // Slightly relaxed, clear educational pace
-      utterance.pitch = 1.0;
+      // ResponsiveVoice Japanese Voice API
+      const responsiveVoiceUrl = `https://code.responsivevoice.org/getvoice.php?t=${encodeURIComponent(text)}&tl=ja`;
+      const audio = new Audio(responsiveVoiceUrl);
 
-      const voices = window.speechSynthesis.getVoices();
-      const voiceToUse =
-        jaVoice ||
-        voices.find(
-          (v) =>
-            v.lang.toLowerCase().replace('_', '-').startsWith('ja') &&
-            (v.name.includes('Natural') ||
-              v.name.includes('Google') ||
-              v.name.includes('Online') ||
-              v.name.includes('Nanami') ||
-              v.name.includes('Haruka'))
-        ) ||
-        voices.find((v) => v.lang.toLowerCase().replace('_', '-').startsWith('ja'));
-
-      if (voiceToUse) {
-        utterance.voice = voiceToUse;
-      }
-
-      window.speechSynthesis.speak(utterance);
+      audio.play().catch(() => {
+        // Fallback handling if network is unavailable
+      });
+    } catch (err) {
+      console.error('Audio playback error:', err);
     }
-  }, [jaVoice]);
+  }, []);
 
   const navTimerRef = useRef<NodeJS.Timeout | null>(null);
 
