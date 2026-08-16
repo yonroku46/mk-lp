@@ -345,8 +345,25 @@ export default function BenkyoPage() {
     [jaVoice]
   );
 
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  const stopAudio = useCallback(() => {
+    try {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current.currentTime = 0;
+        currentAudioRef.current = null;
+      }
+    } catch (err) {
+      console.error('stopAudio error:', err);
+    }
+  }, []);
+
   // Audio Playback Handler
-  // 1순위: /public/audio/kana/[romaji].mp3 (로컬 static 오디오 파일로 무제한/즉시 재생)
+  // 1순위: /public/audio/kana/[romaji].mp3
   // 2순위: Web Speech API (브라우저 내장 TTS Fallback)
   // 원본URL: https://code.responsivevoice.org/getvoice.php?t=${encodeURIComponent(text)}&tl=ja
   const playAudio = useCallback(
@@ -354,15 +371,13 @@ export default function BenkyoPage() {
       if (e) e.stopPropagation();
 
       try {
-        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-        }
-
+        stopAudio();
 
         // 1순위: /public/audio/kana/[romaji].mp3 로컬 음성 파일 재생
         if (romaji) {
           const audioPath = `/audio/kana/${romaji}.mp3`;
           const audio = new Audio(audioPath);
+          currentAudioRef.current = audio;
 
           audio.play().catch(() => {
             // 로컬 MP3 파일이 없거나 재생 오류 발생 시 Web Speech API Fallback
@@ -376,7 +391,7 @@ export default function BenkyoPage() {
         console.error('Audio playback error:', err);
       }
     },
-    [speakWebSpeech]
+    [speakWebSpeech, stopAudio]
   );
 
   const navTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -390,6 +405,11 @@ export default function BenkyoPage() {
 
   // Card Flip Toggle
   const handleCardClick = () => {
+    stopAudio();
+    if (navTimerRef.current !== null) {
+      clearTimeout(navTimerRef.current);
+      navTimerRef.current = null;
+    }
     const nextFlippedState = !isFlipped;
     setIsFlipped(nextFlippedState);
     if (nextFlippedState && activeCard) {
@@ -399,7 +419,20 @@ export default function BenkyoPage() {
 
   // Next Card Navigation with optional Show-Answer-First logic
   const handleNext = useCallback(() => {
-    if (navTimerRef.current) clearTimeout(navTimerRef.current);
+    stopAudio();
+
+    // If rapid-clicked while card is flipping back: cancel timer & advance index immediately
+    if (navTimerRef.current !== null) {
+      clearTimeout(navTimerRef.current);
+      navTimerRef.current = null;
+      setIsFlipped(false);
+      if (currentIndex < currentDeck.length - 1) {
+        setCurrentIndex((prev) => prev + 1);
+      } else {
+        setShowCompleteModal(true);
+      }
+      return;
+    }
 
     if (showAnswerFirst && !isFlipped) {
       // If check option is ON and card is currently front: flip to back first & play audio
@@ -408,16 +441,17 @@ export default function BenkyoPage() {
         playAudio(activeCard.char, activeCard.romaji);
       }
     } else {
-      // Advance to next card smoothly without showing back of next card
+      // Advance to next card: if flipped, flip back first then update index after 150ms
       if (isFlipped) {
         setIsFlipped(false);
         navTimerRef.current = setTimeout(() => {
+          navTimerRef.current = null;
           if (currentIndex < currentDeck.length - 1) {
             setCurrentIndex((prev) => prev + 1);
           } else {
             setShowCompleteModal(true);
           }
-        }, 180);
+        }, 150);
       } else {
         if (currentIndex < currentDeck.length - 1) {
           setCurrentIndex((prev) => prev + 1);
@@ -426,25 +460,36 @@ export default function BenkyoPage() {
         }
       }
     }
-  }, [showAnswerFirst, isFlipped, activeCard, playAudio, currentIndex, currentDeck.length]);
+  }, [showAnswerFirst, isFlipped, activeCard, playAudio, stopAudio, currentIndex, currentDeck.length]);
 
   // Prev Card Navigation
   const handlePrev = useCallback(() => {
-    if (navTimerRef.current) clearTimeout(navTimerRef.current);
+    stopAudio();
+
+    if (navTimerRef.current !== null) {
+      clearTimeout(navTimerRef.current);
+      navTimerRef.current = null;
+      setIsFlipped(false);
+      if (currentIndex > 0) {
+        setCurrentIndex((prev) => prev - 1);
+      }
+      return;
+    }
 
     if (isFlipped) {
       setIsFlipped(false);
       navTimerRef.current = setTimeout(() => {
+        navTimerRef.current = null;
         if (currentIndex > 0) {
           setCurrentIndex((prev) => prev - 1);
         }
-      }, 180);
+      }, 150);
     } else {
       if (currentIndex > 0) {
         setCurrentIndex((prev) => prev - 1);
       }
     }
-  }, [isFlipped, currentIndex]);
+  }, [stopAudio, isFlipped, currentIndex]);
 
   // Shuffle Toggle
   const handleShuffleToggle = () => {
@@ -649,9 +694,7 @@ export default function BenkyoPage() {
             <div className="grid-section-header">
               <div className="grid-title-group">
                 <span className="grid-title">
-                  {mode === 'hiragana' ? '히라가나' : '카타카나'}
-                  {soundType === 'seion' ? '표' : soundType === 'dakuon' ? ' 탁음표' : ' 반탁음표'} (
-                  {gridItems.filter(Boolean).length}자)
+                  {mode === 'hiragana' ? '히라가나' : '카타카나'}표
                 </span>
                 <span className="grid-subtitle">터치하면 소리를 들을 수 있어요</span>
               </div>
@@ -664,7 +707,7 @@ export default function BenkyoPage() {
                 >
                   <span>
                     {soundType === 'seion'
-                      ? '청음 (기본)'
+                      ? '청음'
                       : soundType === 'dakuon'
                       ? '탁음 (゛)'
                       : '반탁음 (゜)'}
@@ -674,15 +717,15 @@ export default function BenkyoPage() {
                 <button
                   className="grid-sub-toggle-btn"
                   onClick={cycleGridSubMode}
-                  title="발음 표시 변경 (로마자 ➔ 한글발음 ➔ 숨김)"
+                  title="발음 표시 변경 (로마자 ➔ 한글 ➔ 숨김)"
                 >
                   <Languages size={14} />
                   <span>
                     {gridSubMode === 'romaji'
                       ? '로마자'
                       : gridSubMode === 'korean'
-                      ? '한글발음'
-                      : '발음숨김'}
+                      ? '한글'
+                      : '숨김'}
                   </span>
                 </button>
               </div>

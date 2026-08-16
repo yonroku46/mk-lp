@@ -2014,6 +2014,9 @@ main {
   margin: 0 auto;
   gap: 14px;
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
 
   /* Header */
   .benkyo-header {
@@ -2652,33 +2655,50 @@ main {
     padding: 18px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 
+    @media (max-width: 480px) {
+      padding: 14px 12px;
+      border-radius: 16px;
+    }
+
     .grid-section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
+      gap: 8px;
 
       .grid-title-group {
         display: flex;
         flex-direction: column;
+        min-width: 0;
 
         .grid-title {
           font-size: 1rem;
           font-weight: 800;
           color: var(--text-primary);
+          white-space: nowrap;
+
+          @media (max-width: 480px) {
+            font-size: 0.9375rem;
+          }
         }
 
         .grid-subtitle {
           font-size: 0.75rem;
           color: var(--text-secondary);
+
+          @media (max-width: 480px) {
+            display: none;
+          }
         }
       }
 
       .grid-header-actions {
         display: flex;
         align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
+        gap: 6px;
+        flex-wrap: nowrap;
+        flex-shrink: 0;
       }
 
       .grid-sub-toggle-btn {
@@ -2694,6 +2714,14 @@ main {
         font-weight: 700;
         cursor: pointer;
         transition: all 0.2s ease;
+        white-space: nowrap;
+
+        @media (max-width: 480px) {
+          padding: 5px 8px;
+          font-size: 0.71875rem;
+          border-radius: 10px;
+          gap: 3px;
+        }
 
         &:hover {
           background: rgba(15, 147, 224, 0.16);
