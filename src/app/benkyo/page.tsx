@@ -49,6 +49,69 @@ const ROMAJI_TO_KO: Record<string, string> = {
   wa: '와', wo: '오', n: '응',
 };
 
+// Dakuon (탁음) & Handakuon (반탁음) static data
+const HIRAGANA_DAKUON: KanaItem[] = [
+  { char: 'が', romaji: 'ga', korean: '가', mnemonic: '가(か)에 탁음(゛)', rowGroup: 'か행', type: 'hiragana' },
+  { char: 'ぎ', romaji: 'gi', korean: '기', mnemonic: '키(き)에 탁음(゛)', rowGroup: 'か행', type: 'hiragana' },
+  { char: 'ぐ', romaji: 'gu', korean: '구', mnemonic: '쿠(く)에 탁음(゛)', rowGroup: 'か행', type: 'hiragana' },
+  { char: 'げ', romaji: 'ge', korean: '게', mnemonic: '케(け)에 탁음(゛)', rowGroup: 'か행', type: 'hiragana' },
+  { char: 'ご', romaji: 'go', korean: '고', mnemonic: '코(こ)에 탁음(゛)', rowGroup: 'か행', type: 'hiragana' },
+  { char: 'ざ', romaji: 'za', korean: '자', mnemonic: '사(さ)에 탁음(゛)', rowGroup: 'さ행', type: 'hiragana' },
+  { char: 'じ', romaji: 'ji', korean: '지', mnemonic: '시(し)에 탁음(゛)', rowGroup: 'さ행', type: 'hiragana' },
+  { char: 'ず', romaji: 'zu', korean: '즈', mnemonic: '스(す)에 탁음(゛)', rowGroup: 'さ행', type: 'hiragana' },
+  { char: 'ぜ', romaji: 'ze', korean: '제', mnemonic: '세(せ)에 탁음(゛)', rowGroup: 'さ행', type: 'hiragana' },
+  { char: 'ぞ', romaji: 'zo', korean: '조', mnemonic: '소(そ)에 탁음(゛)', rowGroup: 'さ행', type: 'hiragana' },
+  { char: 'だ', romaji: 'da', korean: '다', mnemonic: '타(た)에 탁음(゛)', rowGroup: 'た행', type: 'hiragana' },
+  { char: 'ぢ', romaji: 'dji', korean: '지', mnemonic: '치(ち)에 탁음(゛)', rowGroup: 'た행', type: 'hiragana' },
+  { char: 'づ', romaji: 'dzu', korean: '즈', mnemonic: '츠(つ)에 탁음(゛)', rowGroup: 'た행', type: 'hiragana' },
+  { char: 'で', romaji: 'de', korean: '데', mnemonic: '테(て)에 탁음(゛)', rowGroup: 'た행', type: 'hiragana' },
+  { char: 'ど', romaji: 'do', korean: '도', mnemonic: '토(と)에 탁음(゛)', rowGroup: 'た행', type: 'hiragana' },
+  { char: 'ば', romaji: 'ba', korean: '바', mnemonic: '하(は)에 탁음(゛)', rowGroup: 'は행', type: 'hiragana' },
+  { char: 'び', romaji: 'bi', korean: '비', mnemonic: '히(ひ)에 탁음(゛)', rowGroup: 'は행', type: 'hiragana' },
+  { char: 'ぶ', romaji: 'bu', korean: '부', mnemonic: '후(ふ)에 탁음(゛)', rowGroup: 'は행', type: 'hiragana' },
+  { char: 'べ', romaji: 'be', korean: '베', mnemonic: '헤(へ)에 탁음(゛)', rowGroup: 'は행', type: 'hiragana' },
+  { char: 'ぼ', romaji: 'bo', korean: '보', mnemonic: '호(ほ)에 탁음(゛)', rowGroup: 'は행', type: 'hiragana' },
+];
+
+const HIRAGANA_HANDAKUON: KanaItem[] = [
+  { char: 'ぱ', romaji: 'pa', korean: '파', mnemonic: '하(は)에 반탁음(゜)', rowGroup: 'は행', type: 'hiragana' },
+  { char: 'ぴ', romaji: 'pi', korean: '피', mnemonic: '히(ひ)에 반탁음(゜)', rowGroup: 'は행', type: 'hiragana' },
+  { char: 'ぷ', romaji: 'pu', korean: '푸', mnemonic: '후(ふ)에 반탁음(゜)', rowGroup: 'は행', type: 'hiragana' },
+  { char: 'ぺ', romaji: 'pe', korean: '페', mnemonic: '헤(へ)에 반탁음(゜)', rowGroup: 'は행', type: 'hiragana' },
+  { char: 'ぽ', romaji: 'po', korean: '포', mnemonic: '호(ほ)에 반탁음(゜)', rowGroup: 'は행', type: 'hiragana' },
+];
+
+const KATAKANA_DAKUON: KanaItem[] = [
+  { char: 'ガ', romaji: 'ga', korean: '가', mnemonic: '카(カ)에 탁음(゛)', rowGroup: 'か행', type: 'katakana' },
+  { char: 'ギ', romaji: 'gi', korean: '기', mnemonic: '키(キ)에 탁음(゛)', rowGroup: 'か행', type: 'katakana' },
+  { char: 'グ', romaji: 'gu', korean: '구', mnemonic: '쿠(ク)에 탁음(゛)', rowGroup: 'か행', type: 'katakana' },
+  { char: 'ゲ', romaji: 'ge', korean: '게', mnemonic: '케(ケ)에 탁음(゛)', rowGroup: 'か행', type: 'katakana' },
+  { char: 'ゴ', romaji: 'go', korean: '고', mnemonic: '코(コ)에 탁음(゛)', rowGroup: 'か행', type: 'katakana' },
+  { char: 'ザ', romaji: 'za', korean: '자', mnemonic: '사(サ)에 탁음(゛)', rowGroup: 'さ행', type: 'katakana' },
+  { char: 'ジ', romaji: 'ji', korean: '지', mnemonic: '시(シ)에 탁음(゛)', rowGroup: 'さ행', type: 'katakana' },
+  { char: 'ズ', romaji: 'zu', korean: '즈', mnemonic: '스(ス)에 탁음(゛)', rowGroup: 'さ행', type: 'katakana' },
+  { char: 'ゼ', romaji: 'ze', korean: '제', mnemonic: '세(セ)에 탁음(゛)', rowGroup: 'さ행', type: 'katakana' },
+  { char: 'ゾ', romaji: 'zo', korean: '조', mnemonic: '소(ソ)에 탁음(゛)', rowGroup: 'さ행', type: 'katakana' },
+  { char: 'ダ', romaji: 'da', korean: '다', mnemonic: '타(タ)에 탁음(゛)', rowGroup: 'た행', type: 'katakana' },
+  { char: 'ヂ', romaji: 'dji', korean: '지', mnemonic: '치(チ)에 탁음(゛)', rowGroup: 'た행', type: 'katakana' },
+  { char: 'ヅ', romaji: 'dzu', korean: '즈', mnemonic: '츠(ツ)에 탁음(゛)', rowGroup: 'た행', type: 'katakana' },
+  { char: 'デ', romaji: 'de', korean: '데', mnemonic: '테(テ)에 탁음(゛)', rowGroup: 'た행', type: 'katakana' },
+  { char: 'ド', romaji: 'do', korean: '도', mnemonic: '토(ト)에 탁음(゛)', rowGroup: 'た행', type: 'katakana' },
+  { char: 'バ', romaji: 'ba', korean: '바', mnemonic: '하(ハ)에 탁음(゛)', rowGroup: 'は행', type: 'katakana' },
+  { char: 'ビ', romaji: 'bi', korean: '비', mnemonic: '히(ヒ)에 탁음(゛)', rowGroup: 'は행', type: 'katakana' },
+  { char: 'ブ', romaji: 'bu', korean: '부', mnemonic: '후(フ)에 탁음(゛)', rowGroup: 'は행', type: 'katakana' },
+  { char: 'ベ', romaji: 'be', korean: '베', mnemonic: '헤(ヘ)에 탁음(゛)', rowGroup: 'は행', type: 'katakana' },
+  { char: 'ボ', romaji: 'bo', korean: '보', mnemonic: '호(ホ)에 탁음(゛)', rowGroup: 'は행', type: 'katakana' },
+];
+
+const KATAKANA_HANDAKUON: KanaItem[] = [
+  { char: 'パ', romaji: 'pa', korean: '파', mnemonic: '하(ハ)에 반탁음(゜)', rowGroup: 'は행', type: 'katakana' },
+  { char: 'ピ', romaji: 'pi', korean: '피', mnemonic: '히(ヒ)에 반탁음(゜)', rowGroup: 'は행', type: 'katakana' },
+  { char: 'プ', romaji: 'pu', korean: '푸', mnemonic: '후(フ)에 반탁음(゜)', rowGroup: 'は행', type: 'katakana' },
+  { char: 'ペ', romaji: 'pe', korean: '페', mnemonic: '헤(ヘ)에 반탁음(゜)', rowGroup: 'は행', type: 'katakana' },
+  { char: 'ポ', romaji: 'po', korean: '포', mnemonic: '호(ホ)에 반탁음(゜)', rowGroup: 'は행', type: 'katakana' },
+];
+
 // Row Groups mapping
 const ROW_GROUPS = [
   '전체',
@@ -94,6 +157,8 @@ export default function BenkyoPage() {
 
   // Grid sheet subtext toggle state: romaji -> korean -> none -> romaji
   const [gridSubMode, setGridSubMode] = useState<'romaji' | 'korean' | 'none'>('romaji');
+  // Sound type toggle state: seion (청음) -> dakuon (탁음) -> handakuon (반탁음) -> seion
+  const [soundType, setSoundType] = useState<'seion' | 'dakuon' | 'handakuon'>('seion');
   const [jaVoice, setJaVoice] = useState<SpeechSynthesisVoice | null>(null);
 
   // Load authentic Japanese TTS voice from browser
@@ -136,7 +201,43 @@ export default function BenkyoPage() {
     });
   };
 
-  // Parse base data
+  // Cycle sound type mode (청음 -> 탁음 -> 반탁음)
+  const cycleSoundType = () => {
+    setSoundType((prev) => {
+      if (prev === 'seion') return 'dakuon';
+      if (prev === 'dakuon') return 'handakuon';
+      return 'seion';
+    });
+  };
+
+  // Available row groups depending on viewMode & soundType
+  const availableRowGroups = useMemo(() => {
+    if (viewMode === 'grid') {
+      if (soundType === 'dakuon') {
+        return ['전체', 'か행', 'さ행', 'た행', 'は행'];
+      }
+      if (soundType === 'handakuon') {
+        return ['전체', 'は행'];
+      }
+    }
+    return ROW_GROUPS;
+  }, [viewMode, soundType]);
+
+  // Reset soundType to 'seion' when switching back to flashcard mode
+  useEffect(() => {
+    if (viewMode === 'flashcard') {
+      setSoundType('seion');
+    }
+  }, [viewMode]);
+
+  // Automatically reset selectedRow to '전체' if current row is invalid for selected soundType
+  useEffect(() => {
+    if (!availableRowGroups.includes(selectedRow)) {
+      setSelectedRow('전체');
+    }
+  }, [availableRowGroups, selectedRow]);
+
+  // Parse base data for Flashcards (Always 46 Seion characters)
   const rawDeck = useMemo(() => {
     const jsonSource = mode === 'hiragana' ? hiraganaJson : katakanaJson;
     const items: KanaItem[] = Object.entries(jsonSource as Record<string, RawItem>).map(
@@ -158,9 +259,23 @@ export default function BenkyoPage() {
     return rawDeck.filter((item) => item.rowGroup === selectedRow);
   }, [rawDeck, selectedRow]);
 
-  // Structured Grid layout items for standard Japanese 50-on chart (5 columns)
-  // Handles empty slots for や행 (ya, _, yu, _, yo) and わ행 (wa, _, _, _, wo)
+  // Structured Grid layout items for Japanese Kana chart
   const gridItems = useMemo(() => {
+    if (soundType === 'dakuon') {
+      const list = mode === 'hiragana' ? HIRAGANA_DAKUON : KATAKANA_DAKUON;
+      if (selectedRow === '전체') return list;
+      const filtered = list.filter((item) => item.rowGroup === selectedRow);
+      return filtered.length > 0 ? filtered : list;
+    }
+
+    if (soundType === 'handakuon') {
+      const list = mode === 'hiragana' ? HIRAGANA_HANDAKUON : KATAKANA_HANDAKUON;
+      if (selectedRow === '전체') return list;
+      const filtered = list.filter((item) => item.rowGroup === selectedRow);
+      return filtered.length > 0 ? filtered : list;
+    }
+
+    // soundType === 'seion' (기본 오십음도)
     const itemMap = new Map<string, KanaItem>();
     rawDeck.forEach((item) => itemMap.set(item.romaji, item));
 
@@ -191,7 +306,7 @@ export default function BenkyoPage() {
     }
 
     return filteredDeck;
-  }, [rawDeck, filteredDeck, selectedRow]);
+  }, [mode, soundType, rawDeck, filteredDeck, selectedRow]);
 
   // Handle deck shuffling
   const currentDeck = useMemo(() => {
@@ -214,26 +329,55 @@ export default function BenkyoPage() {
 
   const activeCard = currentDeck[currentIndex] || currentDeck[0];
 
-  // Play Audio using ResponsiveVoice API (External non-Google audio service)
-  const playAudio = useCallback((text: string, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-
-    try {
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+  // Helper for Web Speech API TTS
+  const speakWebSpeech = useCallback(
+    (text: string) => {
+      if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ja-JP';
+      if (jaVoice) {
+        utterance.voice = jaVoice;
       }
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    },
+    [jaVoice]
+  );
 
-      // ResponsiveVoice Japanese Voice API
-      const responsiveVoiceUrl = `https://code.responsivevoice.org/getvoice.php?t=${encodeURIComponent(text)}&tl=ja`;
-      const audio = new Audio(responsiveVoiceUrl);
+  // Audio Playback Handler
+  // 1순위: /public/audio/kana/[romaji].mp3 (로컬 static 오디오 파일로 무제한/즉시 재생)
+  // 2순위: Web Speech API (브라우저 내장 TTS Fallback)
+  // 원본URL: https://code.responsivevoice.org/getvoice.php?t=${encodeURIComponent(text)}&tl=ja
+  const playAudio = useCallback(
+    (text: string, romaji?: string, e?: React.MouseEvent) => {
+      if (e) e.stopPropagation();
 
-      audio.play().catch(() => {
-        // Fallback handling if network is unavailable
-      });
-    } catch (err) {
-      console.error('Audio playback error:', err);
-    }
-  }, []);
+      try {
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+
+
+        // 1순위: /public/audio/kana/[romaji].mp3 로컬 음성 파일 재생
+        if (romaji) {
+          const audioPath = `/audio/kana/${romaji}.mp3`;
+          const audio = new Audio(audioPath);
+
+          audio.play().catch(() => {
+            // 로컬 MP3 파일이 없거나 재생 오류 발생 시 Web Speech API Fallback
+            speakWebSpeech(text);
+          });
+          return;
+        }
+
+        speakWebSpeech(text);
+      } catch (err) {
+        console.error('Audio playback error:', err);
+      }
+    },
+    [speakWebSpeech]
+  );
 
   const navTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -249,7 +393,7 @@ export default function BenkyoPage() {
     const nextFlippedState = !isFlipped;
     setIsFlipped(nextFlippedState);
     if (nextFlippedState && activeCard) {
-      playAudio(activeCard.char);
+      playAudio(activeCard.char, activeCard.romaji);
     }
   };
 
@@ -261,7 +405,7 @@ export default function BenkyoPage() {
       // If check option is ON and card is currently front: flip to back first & play audio
       setIsFlipped(true);
       if (activeCard) {
-        playAudio(activeCard.char);
+        playAudio(activeCard.char, activeCard.romaji);
       }
     } else {
       // Advance to next card smoothly without showing back of next card
@@ -410,7 +554,7 @@ export default function BenkyoPage() {
               value={selectedRow}
               onChange={(e) => setSelectedRow(e.target.value)}
             >
-              {ROW_GROUPS.map((row) => (
+              {availableRowGroups.map((row) => (
                 <option key={row} value={row}>
                   {row}
                 </option>
@@ -465,7 +609,7 @@ export default function BenkyoPage() {
                         </div>
                         <button
                           className="audio-icon-btn"
-                          onClick={(e) => playAudio(activeCard.char, e)}
+                          onClick={(e) => playAudio(activeCard.char, activeCard.romaji, e)}
                           title="발음 듣기"
                         >
                           <Volume2 size={16} />
@@ -505,25 +649,43 @@ export default function BenkyoPage() {
             <div className="grid-section-header">
               <div className="grid-title-group">
                 <span className="grid-title">
-                  {mode === 'hiragana' ? '히라가나' : '카타카나'}표 ({filteredDeck.length}자)
+                  {mode === 'hiragana' ? '히라가나' : '카타카나'}
+                  {soundType === 'seion' ? '표' : soundType === 'dakuon' ? ' 탁음표' : ' 반탁음표'} (
+                  {gridItems.filter(Boolean).length}자)
                 </span>
                 <span className="grid-subtitle">터치하면 소리를 들을 수 있어요</span>
               </div>
 
-              <button
-                className="grid-sub-toggle-btn"
-                onClick={cycleGridSubMode}
-                title="발음 표시 변경 (로마자 ➔ 한글발음 ➔ 숨김)"
-              >
-                <Languages size={14} />
-                <span>
-                  {gridSubMode === 'romaji'
-                    ? '로마자'
-                    : gridSubMode === 'korean'
-                    ? '한글 발음'
-                    : '발음 숨김'}
-                </span>
-              </button>
+              <div className="grid-header-actions">
+                <button
+                  className={`grid-sub-toggle-btn sound-type-btn ${soundType}`}
+                  onClick={cycleSoundType}
+                  title="소리 구분 변경 (청음 ➔ 탁음 ➔ 반탁음)"
+                >
+                  <span>
+                    {soundType === 'seion'
+                      ? '청음 (기본)'
+                      : soundType === 'dakuon'
+                      ? '탁음 (゛)'
+                      : '반탁음 (゜)'}
+                  </span>
+                </button>
+
+                <button
+                  className="grid-sub-toggle-btn"
+                  onClick={cycleGridSubMode}
+                  title="발음 표시 변경 (로마자 ➔ 한글발음 ➔ 숨김)"
+                >
+                  <Languages size={14} />
+                  <span>
+                    {gridSubMode === 'romaji'
+                      ? '로마자'
+                      : gridSubMode === 'korean'
+                      ? '한글발음'
+                      : '발음숨김'}
+                  </span>
+                </button>
+              </div>
             </div>
 
             <div className="kana-chart-grid">
@@ -532,7 +694,7 @@ export default function BenkyoPage() {
                   <div
                     key={item.char}
                     className="chart-card"
-                    onClick={() => playAudio(item.char)}
+                    onClick={() => playAudio(item.char, item.romaji)}
                     title={`${item.char} (${item.romaji}): ${item.mnemonic}`}
                   >
                     <span className="chart-char">{item.char}</span>

@@ -2674,6 +2674,13 @@ main {
         }
       }
 
+      .grid-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
       .grid-sub-toggle-btn {
         display: inline-flex;
         align-items: center;
@@ -2695,6 +2702,25 @@ main {
 
         &:active {
           transform: scale(0.96);
+        }
+
+        &.sound-type-btn {
+          &.dakuon {
+            background: rgba(175, 82, 222, 0.1);
+            color: #af52de;
+            border-color: rgba(175, 82, 222, 0.25);
+            &:hover {
+              background: rgba(175, 82, 222, 0.18);
+            }
+          }
+          &.handakuon {
+            background: rgba(255, 149, 0, 0.1);
+            color: #ff9500;
+            border-color: rgba(255, 149, 0, 0.25);
+            &:hover {
+              background: rgba(255, 149, 0, 0.18);
+            }
+          }
         }
       }
     }
