@@ -2052,6 +2052,7 @@ main {
     align-items: center;
     justify-content: space-between;
     gap: 6px;
+    margin-top: -7px;
 
     .benkyo-tab-group {
       display: flex;
@@ -2087,7 +2088,7 @@ main {
     .toolbar-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex-shrink: 0;
 
       .row-select-dropdown {
@@ -2282,6 +2283,7 @@ main {
     height: 58dvh;
     max-height: 500px;
     margin: auto 0;
+    margin-bottom: -7px;
     perspective: 1000px;
     cursor: pointer;
     user-select: none;
@@ -2399,10 +2401,10 @@ main {
           }
 
           .sub-pronunciation {
-            margin-top: 12px;
             display: flex;
-            align-items: center;
-            gap: 8px;
+            align-items: baseline;
+            height: 35px;
+            margin-bottom: -35px;
 
             .romaji {
               font-size: 1.75rem;
@@ -2416,6 +2418,13 @@ main {
               font-weight: 800;
               color: #0f93e0;
               letter-spacing: -0.02em;
+              &::before {
+                content: "/";
+                color: #0f93e070;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                margin: 0 4px;
+              }
             }
           }
         }

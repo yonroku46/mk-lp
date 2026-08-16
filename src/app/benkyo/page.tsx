@@ -386,18 +386,6 @@ export default function BenkyoPage() {
           </div>
 
           <div className="toolbar-actions">
-            <select
-              className="row-select-dropdown"
-              value={selectedRow}
-              onChange={(e) => setSelectedRow(e.target.value)}
-            >
-              {ROW_GROUPS.map((row) => (
-                <option key={row} value={row}>
-                  {row}
-                </option>
-              ))}
-            </select>
-
             {viewMode === 'flashcard' && (
               <>
                 <button
@@ -417,6 +405,17 @@ export default function BenkyoPage() {
                 </button>
               </>
             )}
+            <select
+              className="row-select-dropdown"
+              value={selectedRow}
+              onChange={(e) => setSelectedRow(e.target.value)}
+            >
+              {ROW_GROUPS.map((row) => (
+                <option key={row} value={row}>
+                  {row}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -454,7 +453,7 @@ export default function BenkyoPage() {
                       <div className="main-char">{activeCard.char}</div>
                       <div className="sub-pronunciation">
                         <span className="romaji">{activeCard.romaji}</span>
-                        <span className="korean">[{activeCard.korean}]</span>
+                        <span className="korean">{activeCard.korean}</span>
                       </div>
                     </div>
 
