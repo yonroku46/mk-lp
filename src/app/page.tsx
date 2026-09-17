@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link';
-import { ChevronRight, Clock, Calendar, Ticket, Book } from 'lucide-react';
+import { ChevronRight, Clock, Calendar, Ticket, Book, Info } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -9,10 +9,10 @@ export default function HomePage() {
       <div className="container">
         <h1 className="title">
           스터디 예약하기
-          {/* <div className="info">
+          <div className="info">
             <Info size={18} />
-            7월6일부로 통합 변경되었습니다.
-          </div> */}
+            10월 20일부터 약 3주간 "아유미 센세"의 수업일정이 "미쿠 센세"로 일시적으로 변경됩니다.
+          </div>
         </h1>
         <p className="notice">센세별 운영시간은 운영 시간표에서 확인 가능합니다.<br />횟수권 잔여확인은 메세지로 문의 부탁드립니다.</p>
         
