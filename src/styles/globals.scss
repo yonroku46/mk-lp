@@ -623,31 +623,14 @@ main {
     .sch-ticket-card {
       background: linear-gradient(135deg, #b862eb 0%, #8b45cc 100%);
       color: #ffffff;
-      border-radius: 16px;
-      padding: 20px;
+      border-radius: 20px;
+      padding: 22px 20px 18px 20px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 8px 24px rgba(139, 69, 204, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 10px 28px rgba(139, 69, 204, 0.25);
       margin-bottom: 18px;
-
-      &::before, &::after {
-        content: '';
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        background: var(--card-bg);
-        border-radius: 50%;
-        bottom: 45px;
-        z-index: 2;
-      }
-      &::before {
-        left: -8px;
-        box-shadow: inset -3px 0 5px rgba(0, 0, 0, 0.15);
-      }
-      &::after {
-        right: -8px;
-        box-shadow: inset 3px 0 5px rgba(0, 0, 0, 0.15);
-      }
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
 
       .ticket-header {
         display: flex;
@@ -683,7 +666,7 @@ main {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
         gap: 8px;
-        margin: 16px 0 6px 0;
+        margin: 16px 0 18px 0;
 
         .ticket-stamp {
           aspect-ratio: 1;
@@ -691,36 +674,38 @@ main {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1rem;
+          font-size: 0.9375rem;
           font-weight: 800;
           transition: all 0.25s ease;
 
           &.used {
-            background: rgba(255, 255, 255, 0.25);
-            color: #ffffff;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            color: #8b45cc;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+            transform: scale(1.02);
+
+            svg {
+              stroke-width: 3.2px;
+            }
           }
 
           &.remaining {
-            border: 1px dashed rgba(255, 255, 255, 0.4);
-            color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1.5px dashed rgba(255, 255, 255, 0.55);
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 700;
           }
         }
-      }
-
-      .ticket-divider {
-        border-top: 1px dashed rgba(255, 255, 255, 0.3);
-        margin: 14px 0;
-        position: relative;
       }
 
       .ticket-footer {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 0.6875rem;
-        opacity: 0.85;
-        font-weight: 500;
+        font-size: 0.75rem;
+        opacity: 0.9;
+        font-weight: 600;
+        padding-top: 4px;
 
         .card-footer-arrow {
           display: inline-flex;
@@ -1117,17 +1102,29 @@ main {
 
           &.theme-0 {
             background: linear-gradient(135deg, #b862eb 0%, #8b45cc 100%);
-            box-shadow: 0 8px 24px rgba(139, 69, 204, 0.22);
+            box-shadow: 0 10px 28px rgba(139, 69, 204, 0.28);
+
+            .ticket-stamp.used {
+              color: #8b45cc;
+            }
           }
 
           &.theme-1 {
             background: linear-gradient(135deg, #3a7bd5 0%, #3a6073 100%);
-            box-shadow: 0 8px 24px rgba(58, 96, 115, 0.22);
+            box-shadow: 0 10px 28px rgba(58, 96, 115, 0.28);
+
+            .ticket-stamp.used {
+              color: #2b5876;
+            }
           }
 
           &.theme-2 {
             background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%);
-            box-shadow: 0 8px 24px rgba(248, 87, 166, 0.22);
+            box-shadow: 0 10px 28px rgba(248, 87, 166, 0.28);
+
+            .ticket-stamp.used {
+              color: #e0445d;
+            }
           }
         }
 
@@ -1137,7 +1134,7 @@ main {
           transform: translateY(-50%);
           background: rgba(255, 255, 255, 0.95);
           border: none;
-          color: #8b45cc;
+          color: #4d4d4d;
           width: 32px;
           height: 32px;
           border-radius: 50%;

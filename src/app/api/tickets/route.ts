@@ -64,28 +64,24 @@ export async function POST(request: Request) {
           ticketName: '비즈니스 일본어 회화 10회권',
           remaining: 3,
           total: 10,
-          expiry: '2026-07-20',
           purchaseDate: '2026-01-15',
         },
         {
           ticketName: 'JLPT N2 대비 속성반 5회권',
           remaining: 0,
           total: 5,
-          expiry: '2026-06-30',
           purchaseDate: '2026-03-01',
         },
         {
           ticketName: '시사 토론 및 청해 20회권',
           remaining: 18,
           total: 20,
-          expiry: '2026-10-05',
           purchaseDate: '2026-04-10',
         },
         {
           ticketName: 'JLPT N3 입문반 10회권',
           remaining: 0,
           total: 10,
-          expiry: '2025-11-20',
           purchaseDate: '2025-05-10',
         }
       ];
@@ -187,23 +183,67 @@ export async function POST(request: Request) {
       const ticketsCsv = await ticketsRes.text();
       const ticketRows = ticketsCsv
         .split(/\r?\n/)
-        .map(line => line.split(',').map(cell => cell.replace(/^"(.*)"$/, '$1').trim()))
-        .filter(row => row.length >= 3); // A: No, B: 닉네임, C: 수강권 이름 (안전하게 최소 3열 이상만 있으면 파싱)
+        .map(line => line.split(',').map(cell => cell.replace(/^"(.*)"$/, '$1').trim()));
+      const rawRows = ticketRows.filter(row => row.length >= 3);
+      if (rawRows.length > 0) {
+        const headerCandidate = rawRows[0];
+        const isHeader = headerCandidate.some(cell => 
+          cell.includes('닉네임') || cell.includes('수강권') || cell.includes('횟수')
+        );
 
-      tickets = ticketRows
-        .filter(row => {
-          const rowNickname = row[1] || '';
-          return rowNickname.toLowerCase() === studentNickname.toLowerCase();
-        })
-        .map((row, idx) => ({
-          ticketName: row[2] || '',
-          remaining: Number(row[3]) || 0,
-          total: Number(row[4]) || 0,
-          expiry: row[5] || '기한 없음',
-          purchaseDate: row[6] || '',
-          csvIndex: idx,
-        }))
-        .reverse();
+        let nIdx = 1;
+        let tnIdx = 2;
+        let remIdx = 3;
+        let totIdx = 4;
+        let pIdx = 5;
+        let rkIdx = 6;
+
+        if (isHeader) {
+          const foundN = headerCandidate.findIndex(h => h.includes('닉네임'));
+          const foundTn = headerCandidate.findIndex(h => h.includes('수강권') || h.includes('명칭'));
+          const foundRem = headerCandidate.findIndex(h => h.includes('남은') || h.includes('잔여'));
+          const foundTot = headerCandidate.findIndex(h => h.includes('총'));
+          const foundP = headerCandidate.findIndex(h => h.includes('등록') || h.includes('구입') || h.includes('구매'));
+          const foundRk = headerCandidate.findIndex(h => h.includes('비고'));
+
+          if (foundN !== -1) nIdx = foundN;
+          if (foundTn !== -1) tnIdx = foundTn;
+          if (foundRem !== -1) remIdx = foundRem;
+          if (foundTot !== -1) totIdx = foundTot;
+          if (foundRk !== -1) rkIdx = foundRk;
+          if (foundP !== -1) {
+            pIdx = foundP;
+          } else {
+            pIdx = headerCandidate.length >= 8 ? 6 : 5;
+          }
+        } else {
+          pIdx = rawRows[0].length >= 8 ? 6 : 5;
+          rkIdx = rawRows[0].length - 1;
+        }
+
+        const dataRows = isHeader ? rawRows.slice(1) : rawRows;
+
+        tickets = dataRows
+          .filter(row => {
+            const rowNickname = row[nIdx] || '';
+            return rowNickname.toLowerCase() === studentNickname.toLowerCase();
+          })
+          .map((row, idx) => {
+            const remarkText = (row[rkIdx] || '').trim();
+            const isCompleted = remarkText.includes('사용완료') || remarkText.includes('소진완료');
+            const sheetRemaining = Number(row[remIdx]) || 0;
+            const remaining = isCompleted ? 0 : sheetRemaining;
+
+            return {
+              ticketName: row[tnIdx] || '',
+              remaining,
+              total: Number(row[totIdx]) || 0,
+              purchaseDate: row[pIdx] || '',
+              csvIndex: idx,
+            };
+          })
+          .reverse();
+      }
     }
 
     // 3. Parse History (Sheet 3)
@@ -212,23 +252,52 @@ export async function POST(request: Request) {
       const historyCsv = await historyRes.text();
       const historyRows = historyCsv
         .split(/\r?\n/)
-        .map(line => line.split(',').map(cell => cell.replace(/^"(.*)"$/, '$1').trim()))
-        .filter(row => row.length >= 3); // A: No, B: 닉네임, C: 수업일자 (안전하게 최소 3열 이상만 있으면 파싱)
+        .map(line => line.split(',').map(cell => cell.replace(/^"(.*)"$/, '$1').trim()));
+      const rawHistoryRows = historyRows.filter(row => row.length >= 3);
 
-      history = historyRows
-        .filter(row => {
-          const rowNickname = row[1] || '';
-          return rowNickname.toLowerCase() === studentNickname.toLowerCase();
-        })
-        .map(row => ({
-          date: row[2] || '',
-          time: row[3] || '',
-          tutor: row[4] || '',
-          ticketName: row[6] || '',
-        }));
+      if (rawHistoryRows.length > 0) {
+        const headerCandidate = rawHistoryRows[0];
+        const isHeader = headerCandidate.some(cell => 
+          cell.includes('닉네임') || cell.includes('수업') || cell.includes('강사')
+        );
 
-      // Sort by date descending (newest first)
-      history.sort((a, b) => b.date.localeCompare(a.date));
+        let nIdx = 1;      // 닉네임
+        let dateIdx = 2;   // 수업일자
+        let timeIdx = 3;   // 수업시간
+        let tutorIdx = 4;  // 담당강사
+        let tnIdx = 5;     // 사용수업권 (등록일자 열 삭제 후 5번째)
+
+        if (isHeader) {
+          const foundN = headerCandidate.findIndex(h => h.includes('닉네임'));
+          const foundDate = headerCandidate.findIndex(h => h.includes('수업일자') || h.includes('날짜') || h.includes('일자'));
+          const foundTime = headerCandidate.findIndex(h => h.includes('시간'));
+          const foundTutor = headerCandidate.findIndex(h => h.includes('강사') || h.includes('센세') || h.includes('담당'));
+          const foundTn = headerCandidate.findIndex(h => h.includes('수업권') || h.includes('수강권') || h.includes('사용'));
+
+          if (foundN !== -1) nIdx = foundN;
+          if (foundDate !== -1) dateIdx = foundDate;
+          if (foundTime !== -1) timeIdx = foundTime;
+          if (foundTutor !== -1) tutorIdx = foundTutor;
+          if (foundTn !== -1) tnIdx = foundTn;
+        }
+
+        const dataRows = isHeader ? rawHistoryRows.slice(1) : rawHistoryRows;
+
+        history = dataRows
+          .filter(row => {
+            const rowNickname = row[nIdx] || '';
+            return rowNickname.toLowerCase() === studentNickname.toLowerCase();
+          })
+          .map(row => ({
+            date: row[dateIdx] || '',
+            time: row[timeIdx] || '',
+            tutor: row[tutorIdx] || '',
+            ticketName: row[tnIdx] || '',
+          }));
+
+        // Sort by date descending (newest first)
+        history.sort((a, b) => b.date.localeCompare(a.date));
+      }
     }
 
     return NextResponse.json({

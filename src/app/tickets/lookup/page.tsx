@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Eye, EyeOff, X, Filter } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Eye, EyeOff, X, Filter, Check } from 'lucide-react';
 
 interface ClassHistoryItem {
   date: string;
@@ -15,7 +15,6 @@ interface TicketInfo {
   ticketName: string;
   remaining: number;
   total: number;
-  expiry: string;
   purchaseDate?: string;
   csvIndex?: number;
 }
@@ -27,47 +26,19 @@ interface StudentTicket {
   history?: ClassHistoryItem[];
 }
 
-function getDDayString(expiryStr: string): string | null {
-  if (!expiryStr || expiryStr === '기한 없음') return null;
-
-  const cleanStr = expiryStr.replace(/\./g, '-').trim();
-  const match = cleanStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
-  if (!match) return null;
-
-  const [_, year, month, day] = match;
-  const expiryDate = new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
-  expiryDate.setHours(0, 0, 0, 0);
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const diffTime = expiryDate.getTime() - today.getTime();
-  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays > 0) {
-    return `D-${diffDays}`;
-  } else if (diffDays === 0) {
-    return 'D-Day';
-  } else {
-    return '만료';
-  }
-}
-
 function isTicketExpired(ticket: TicketInfo): boolean {
-  if (ticket.remaining <= 0) return true;
-  const dDay = getDDayString(ticket.expiry);
-  return dDay === '만료';
+  return ticket.remaining <= 0;
 }
 
 function getTicketYear(ticket: TicketInfo): string {
-  const dateStr = ticket.purchaseDate || ticket.expiry || '';
+  const dateStr = ticket.purchaseDate || '';
   const cleanStr = dateStr.replace(/\./g, '-').trim();
   const match = cleanStr.match(/^(\d{4})/);
   return match ? match[1] : '기타';
 }
 
 /**
- * 3가지 조건 (수강권 명칭, 구입일자, 유효기간) 정밀 판별 함수
+ * 2가지 조건 (수강권 명칭, 구입일자) 판별 함수
  */
 function isHistoryMatchSelectedTicket(historyItem: ClassHistoryItem, selectedTicket: TicketInfo): boolean {
   if (!historyItem || !selectedTicket) return false;
@@ -86,14 +57,6 @@ function isHistoryMatchSelectedTicket(historyItem: ClassHistoryItem, selectedTic
   if (selectedTicket.purchaseDate) {
     const pDateStr = selectedTicket.purchaseDate.replace(/\./g, '-').trim();
     if (hDateStr < pDateStr) {
-      return false;
-    }
-  }
-
-  // 3. 유효기간 (expiry) 검증 (수업일자 <= 유효기간)
-  if (selectedTicket.expiry && selectedTicket.expiry !== '기한 없음') {
-    const eDateStr = selectedTicket.expiry.replace(/\./g, '-').trim();
-    if (hDateStr > eDateStr) {
       return false;
     }
   }
@@ -345,7 +308,6 @@ export default function LookupPage() {
                             style={{ transform: `translateX(-${currentTicketIndex * 100}%)` }}
                           >
                             {activeTickets.map((ticket, idx) => {
-                              const ticketDDay = getDDayString(ticket.expiry);
                               const themeClass = `theme-${idx % 3}`;
                               return (
                                 <div key={idx} className="sch-carousel-slide">
@@ -371,17 +333,15 @@ export default function LookupPage() {
                                           const isUsed = stampIdx < usedCount;
                                           return (
                                             <div key={stampIdx} className={`ticket-stamp ${isUsed ? 'used' : 'remaining'}`}>
-                                              {isUsed ? '✓' : stampIdx + 1}
+                                              {isUsed ? <Check size={18} strokeWidth={3.2} /> : stampIdx + 1}
                                             </div>
                                           );
                                         })}
                                       </div>
                                     </div>
 
-                                    <div className="ticket-divider" />
-
                                     <div className="ticket-footer">
-                                      <span>유효기간: {ticket.expiry}{ticketDDay ? ` (${ticketDDay})` : ''}</span>
+                                      <span>구입일: {ticket.purchaseDate || '기록 없음'}</span>
                                       <span className="card-footer-arrow">
                                         <ChevronRight size={16} />
                                       </span>
@@ -448,7 +408,7 @@ export default function LookupPage() {
                         </div>
                         {selectedTicketFilter.purchaseDate && (
                           <div className="filter-chip-date">
-                            {selectedTicketFilter.purchaseDate} ~ {selectedTicketFilter.expiry}
+                            구입일: {selectedTicketFilter.purchaseDate}
                           </div>
                         )}
                       </div>
@@ -492,7 +452,7 @@ export default function LookupPage() {
                             {selectedTicketFilter ? (
                               <>
                                 <p style={{ margin: '0 0 6px 0', fontWeight: 600 }}>
-                                  선택하신 &quot;{selectedTicketFilter.ticketName}&quot; 수강권(구입일: {selectedTicketFilter.purchaseDate || '미상'}, 유효기간: {selectedTicketFilter.expiry})에 해당하는 수업 이력이 없습니다.
+                                  선택하신 &quot;{selectedTicketFilter.ticketName}&quot; 수강권(구입일: {selectedTicketFilter.purchaseDate || '미상'})에 해당하는 수업 이력이 없습니다.
                                 </p>
                                 <button
                                   type="button"
@@ -606,11 +566,8 @@ export default function LookupPage() {
                             <div className="expired-year-title">{group.year === '기타' ? '기타' : `${group.year}년`}</div>
                             <div className="expired-year-list">
                               {group.list.map((ticket, idx) => {
-                                const formattedExpiry = formatMonthDay(ticket.expiry);
                                 const isFullyUsed = ticket.remaining <= 0;
-                                const badgeText = isFullyUsed 
-                                  ? (formattedExpiry && formattedExpiry !== '기한 없음' ? `${formattedExpiry} 소진 완료` : '소진 완료')
-                                  : (formattedExpiry && formattedExpiry !== '기한 없음' ? `${formattedExpiry} 만료` : '유효기간 만료');
+                                const badgeText = isFullyUsed ? '소진 완료' : '종료';
 
                                 return (
                                   <div 
