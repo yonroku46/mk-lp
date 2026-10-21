@@ -1,9 +1,10 @@
 'use client';
 
-import { useMemo, useState, Fragment } from 'react';
+import { useMemo, useState, Fragment, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { ChevronLeft, Share2, Check } from 'lucide-react';
 import AdminExhaustedModal from '../AdminExhaustedModal';
 
 interface TimeSlot {
@@ -27,7 +28,6 @@ const START_HOUR = 10;
 const END_HOUR = 22;
 const SLOT_HEIGHT = 30;
 const TIME_COL_W = 48;
-const DAY_COL_W = 88;
 const HEADER_H = 40;
 
 const timeToSlots = (timeStr: string) => {
@@ -38,9 +38,37 @@ const timeToSlots = (timeStr: string) => {
 const fmt = (h: number, m: number) =>
   `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 
-export default function RegularSchedulePage() {
+function RegularScheduleContent() {
+  const searchParams = useSearchParams();
+  const isShared = searchParams.get('share') === 'true';
+
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    if (typeof window === 'undefined') return;
+    const shareUrl = `${window.location.origin}${window.location.pathname}?share=true`;
+
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = shareUrl;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy share link:', err);
+    }
+  };
 
   // Easter egg state for Admin Modal (Triple tap on Sunday header)
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
@@ -164,11 +192,31 @@ export default function RegularSchedulePage() {
     <main>
       <div className="sch-page">
         <div className="sch-header">
-          <div className="sch-title-wrapper">
-            <Link href="/schedule" className="sch-back-button" aria-label="이전 페이지로 이동">
-              <ChevronLeft size={24} />
-            </Link>
+          <div className={`sch-title-wrapper ${isShared ? 'no-back' : ''}`}>
+            {!isShared && (
+              <Link href="/schedule" className="sch-back-button" aria-label="이전 페이지로 이동">
+                <ChevronLeft size={24} />
+              </Link>
+            )}
             <h1 className="sch-title">정기일정 (개인레슨)</h1>
+            <button
+              type="button"
+              className={`sch-share-button ${copied ? 'copied' : ''}`}
+              onClick={handleShare}
+              aria-label="공유 링크 복사"
+            >
+              {copied ? (
+                <>
+                  <Check size={14} />
+                  <span>복사됨!</span>
+                </>
+              ) : (
+                <>
+                  <Share2 size={14} />
+                  <span>공유</span>
+                </>
+              )}
+            </button>
           </div>
           <p className="sch-notice">
             좌우 스크롤로 전체 요일을 확인하세요.<br />
@@ -258,7 +306,7 @@ export default function RegularSchedulePage() {
                       setHoveredRow(null);
                     }}
                   >
-                    <div className="sch-block-inner">
+                    <div className="sch-block-inner top">
                       <div className="sch-block-avatar">
                         <Image
                           src={block.profileImage}
@@ -315,5 +363,13 @@ export default function RegularSchedulePage() {
         onClose={() => setIsAdminModalOpen(false)}
       />
     </main>
+  );
+}
+
+export default function RegularSchedulePage() {
+  return (
+    <Suspense fallback={null}>
+      <RegularScheduleContent />
+    </Suspense>
   );
 }

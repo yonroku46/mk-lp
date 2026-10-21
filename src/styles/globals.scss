@@ -200,6 +200,42 @@ main {
     gap: 4px;
     margin-bottom: 10px;
     margin-left: -6px;
+
+    &.no-back {
+      margin-left: 2px;
+    }
+
+    .sch-share-button {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      font-size: 0.78125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.04);
+        border-color: #c7c7cc;
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      &.copied {
+        background: #34c759;
+        border-color: #34c759;
+        color: #ffffff;
+      }
+    }
   }
 
   .sch-back-button {
@@ -444,6 +480,10 @@ main {
       gap: 4px;
       height: 100%;
       overflow: hidden;
+      
+      &.top {
+        justify-content: flex-start;
+      }
     }
 
     .sch-group-capacity {
