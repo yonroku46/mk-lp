@@ -14,7 +14,10 @@ export default function HomePage() {
             10월 20일부터 약 3주간 "아유미 센세"의 수업일정이 "미쿠 센세"로 일시적으로 변경됩니다.
           </div>
         </h1>
-        <p className="notice">센세별 운영시간은 운영 시간표에서 확인 가능합니다.<br />횟수권 잔여확인은 메세지로 문의 부탁드립니다.</p>
+        <p className="notice">
+          센세별 운영시간은 운영 시간표에서 확인 가능합니다.<br />
+          서비스 관련 및 기타 문의사항은 카카오톡으로 부탁드립니다.
+        </p>
         
         <div className="action-list">
           <Link href={'https://whattime.co.kr/miku'} className="action-button">
@@ -33,14 +36,15 @@ export default function HomePage() {
           </Link>
           
           <Link href={'/schedule'} className="action-button">
+            <span className="badge-new">NEW</span>
             <div className="action-info">
               <div className="icon-wrapper schedule">
                 <Clock size={24} strokeWidth={2} />
               </div>
               <div className="text-content">
-                <span className="action-title">{'운영 시간표 확인'}</span>
+                <span className="action-title">{'운영 시간표'}</span>
                 <span className="action-subtitle">
-                  {'개인레슨용'}
+                  {'개인레슨/그룹레슨 공통'}
                 </span>
               </div>
             </div>
@@ -70,7 +74,7 @@ export default function HomePage() {
               <div className="text-content">
                 <span className="action-title">{'기초연습'}</span>
                 <span className="action-subtitle">
-                  {'초보자를 위한 연습공간'}
+                  {'히라가나 가타카나 기초다지기'}
                 </span>
               </div>
             </div>

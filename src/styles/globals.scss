@@ -77,6 +77,7 @@ main {
   gap: 10px;
 
   .action-button {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -86,6 +87,21 @@ main {
     border-radius: 16px;
     text-decoration: none;
     cursor: pointer;
+
+    .badge-new {
+      position: absolute;
+      top: -6px;
+      left: -6px;
+      background: #ff3b30;
+      color: #ffffff;
+      font-size: 0.625rem;
+      font-weight: 800;
+      line-height: 1;
+      padding: 4px 6px;
+      border-radius: 9999px;
+      letter-spacing: 0.02em;
+      box-shadow: 0 2px 4px rgba(255, 59, 48, 0.25);
+    }
 
     .action-info {
       display: flex;
@@ -217,6 +233,53 @@ main {
     color: var(--text-secondary);
     margin-left: 2px;
   }
+
+  .sch-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sch-filter-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 14px;
+      font-size: 0.78125rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+
+      &:hover {
+        border-color: #c7c7cc;
+        color: var(--text-primary);
+      }
+
+      &.active {
+        background: var(--text-primary);
+        color: #ffffff;
+        border-color: var(--text-primary);
+        font-weight: 700;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+    }
+  }
 }
 
 .sch-scroll-area {
@@ -245,6 +308,12 @@ main {
     background: var(--card-bg);
     border-right: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
   }
 
   .sch-day-header {
@@ -357,15 +426,94 @@ main {
     box-sizing: border-box;
     z-index: 10;
     align-self: stretch;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &.dimmed {
+      opacity: 0.22;
+      filter: grayscale(40%);
+      transform: scale(0.98);
+      pointer-events: none;
+    }
 
     .sch-block-inner {
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: flex-start;
-      padding: 5px 5px;
-      gap: 2px;
+      padding: 6px 7px;
+      gap: 4px;
       height: 100%;
       overflow: hidden;
+    }
+
+    .sch-group-capacity {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      line-height: 1;
+
+      .capacity-text {
+        display: inline-flex;
+        align-items: center;
+        gap: 1.5px;
+      }
+
+      .badge-num {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        color: #1c1c1e;
+        letter-spacing: -0.01em;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .badge-unit {
+        font-size: 0.625rem;
+        font-weight: 600;
+        color: #8e8e93;
+      }
+
+      .badge-status {
+        font-size: 0.625rem;
+        font-weight: 800;
+        color: #d70015;
+      }
+
+      .capacity-gauge {
+        width: 24px;
+        height: 5px;
+        border-radius: 9999px;
+        background: rgba(0, 0, 0, 0.09);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+
+        .gauge-fill {
+          height: 100%;
+          border-radius: 9999px;
+          transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s;
+        }
+      }
+
+      &.full {
+        background: #fff0f0;
+        border-color: rgba(255, 59, 48, 0.35);
+        box-shadow: 0 1px 4px rgba(255, 59, 48, 0.12);
+
+        .badge-num {
+          color: #d70015;
+          font-weight: 800;
+        }
+
+        .capacity-gauge {
+          background: rgba(215, 0, 21, 0.14);
+        }
+      }
     }
 
     .sch-block-avatar {
@@ -382,6 +530,62 @@ main {
         object-fit: cover;
         object-position: top center;
       }
+    }
+
+    .sch-group-floating-badge {
+      position: absolute;
+      top: 5px;
+      right: -4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      z-index: 2;
+      line-height: 1.2;
+
+      .badge-num {
+        font-size: 0.6875rem;
+        font-weight: 800;
+        color: #111111;
+        letter-spacing: -0.01em;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .badge-unit {
+        font-size: 0.625rem;
+        font-weight: 700;
+        color: #666666;
+      }
+
+      .badge-status {
+        font-size: 0.625rem;
+        font-weight: 800;
+        color: #d70015;
+      }
+
+      &.full {
+        background: #fff0f0;
+        border-color: rgba(255, 59, 48, 0.35);
+        box-shadow: 0 1px 4px rgba(255, 59, 48, 0.15);
+
+        .badge-num {
+          color: #d70015;
+        }
+      }
+    }
+
+    .sch-group-title {
+      font-size: 0.78125rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      word-break: keep-all;
+      color: var(--text-primary);
+      margin-top: 3px;
     }
 
     .sch-block-name {
