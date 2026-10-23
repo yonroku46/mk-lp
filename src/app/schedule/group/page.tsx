@@ -97,6 +97,14 @@ function GroupScheduleContent() {
   const groups: GroupLesson[] = useMemo(() => [
     // ---------------- 화요일 (day: 1) ----------------
     {
+      id: 'tue-10',
+      title: 'N5・4 대비',
+      level: '기초',
+      maxMembers: 4,
+      currentMembers: 0,
+      schedule: [{ day: 1, start: '10:00', end: '11:00' }],
+    },
+    {
       id: 'tue-14',
       title: '초중급 회화',
       level: '초급',
@@ -164,8 +172,8 @@ function GroupScheduleContent() {
     },
     {
       id: 'wed-19',
-      title: '기초반',
-      level: '기초',
+      title: '중급 회화',
+      level: '중급',
       maxMembers: 4,
       currentMembers: 0,
       schedule: [{ day: 2, start: '19:00', end: '20:00' }],
@@ -182,43 +190,19 @@ function GroupScheduleContent() {
     // ---------------- 목요일 (day: 3) ----------------
     {
       id: 'thu-14',
-      title: '초중급 회화',
-      level: '초급',
+      title: '기초반',
+      level: '기초',
       maxMembers: 4,
       currentMembers: 0,
       schedule: [{ day: 3, start: '14:00', end: '15:00' }],
     },
     {
       id: 'thu-15',
-      title: '기초반',
-      level: '기초',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 3, start: '15:00', end: '16:00' }],
-    },
-    {
-      id: 'thu-18',
-      title: 'N3 대비',
+      title: '초중급 회화',
       level: '초급',
       maxMembers: 4,
       currentMembers: 0,
-      schedule: [{ day: 3, start: '18:00', end: '19:00' }],
-    },
-    {
-      id: 'thu-19',
-      title: 'N5・4 대비',
-      level: '기초',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 3, start: '19:00', end: '20:00' }],
-    },
-    {
-      id: 'thu-20',
-      title: 'N2 대비',
-      level: '중급',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 3, start: '20:00', end: '21:00' }],
+      schedule: [{ day: 3, start: '15:00', end: '16:00' }],
     },
 
     // ---------------- 금요일 (day: 4) ----------------
@@ -229,14 +213,6 @@ function GroupScheduleContent() {
       maxMembers: 4,
       currentMembers: 0,
       schedule: [{ day: 4, start: '11:00', end: '12:00' }],
-    },
-    {
-      id: 'fri-15',
-      title: 'N5・4 대비',
-      level: '기초',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 4, start: '15:00', end: '16:00' }],
     },
     {
       id: 'fri-18',
@@ -254,14 +230,6 @@ function GroupScheduleContent() {
       currentMembers: 2,
       schedule: [{ day: 4, start: '19:00', end: '20:00' }],
     },
-    {
-      id: 'fri-20',
-      title: '중급 회화',
-      level: '중급',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 4, start: '20:00', end: '21:00' }],
-    },
 
     // ---------------- 토요일 (day: 5) ----------------
     {
@@ -269,7 +237,7 @@ function GroupScheduleContent() {
       title: '초중급 회화',
       level: '초급',
       maxMembers: 4,
-      currentMembers: 1,
+      currentMembers: 3,
       schedule: [{ day: 5, start: '10:00', end: '11:00' }],
     },
     {
