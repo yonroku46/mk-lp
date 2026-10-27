@@ -211,7 +211,7 @@ function GroupScheduleContent() {
       title: '중급 회화',
       level: '중급',
       maxMembers: 4,
-      currentMembers: 2,
+      currentMembers: 3,
       schedule: [{ day: 4, start: '18:00', end: '19:00' }],
     },
     {

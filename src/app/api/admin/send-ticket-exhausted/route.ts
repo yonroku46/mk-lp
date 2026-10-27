@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import dayjs from 'dayjs';
 import { verifyAdminPasscode } from '@/common/utils/adminAuth';
 
 const SOLAPI_API_KEY = process.env.SOLAPI_API_KEY || '';
@@ -21,13 +22,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. 필수 값 검증
-    if (!realName || !phone || !productName || !expireDate) {
+    // 2. 필수 값 검증 및 만료일 기본값(오늘 날짜) 설정
+    if (!realName || !phone || !productName) {
       return NextResponse.json(
-        { error: '모든 항목(성함, 연락처, 상품명, 만료일)을 입력해 주세요.' },
+        { error: '모든 필수 항목(성함, 연락처, 수강권)을 입력해 주세요.' },
         { status: 400 }
       );
     }
+
+    const targetExpireDate = expireDate?.trim() || dayjs().format('YYYY-MM-DD');
 
     const cleanPhone = phone.replace(/-/g, '').trim();
     if (!/^\d{9,11}$/.test(cleanPhone)) {
@@ -38,7 +41,7 @@ export async function POST(request: Request) {
     }
 
     // 3. 메시지 텍스트 조합
-    const messageText = `새로운 수강권을 신청해주세요\n\n수강권 사용 완료\n\n안녕하세요, ${realName}님.\n\n수강권의 잔여 횟수를 모두 사용하셨습니다.\n\n■ 수강권: ${productName}\n■ 만료일: ${expireDate}\n■ 잔여 횟수: 0회\n\n새로운 수강권 신청이 필요하신 경우 이용 부탁드립니다. 감사합니다.`;
+    const messageText = `새로운 수강권을 신청해주세요\n\n수강권 사용 완료\n\n안녕하세요, ${realName}님.\n\n수강권의 잔여 횟수를 모두 사용하셨습니다.\n\n■ 수강권: ${productName}\n■ 만료일: ${targetExpireDate}\n■ 잔여 횟수: 0회\n\n새로운 수강권 신청이 필요하신 경우 이용 부탁드립니다. 감사합니다.`;
 
     // 4. 솔라피 API 호출 환경변수 확인
     if (!SOLAPI_API_KEY || !SOLAPI_API_SECRET || !SOLAPI_SENDER_NUMBER) {
@@ -74,7 +77,7 @@ export async function POST(request: Request) {
         variables: {
           '#{realName}': realName,
           '#{productName}': productName,
-          '#{expireDate}': expireDate,
+          '#{expireDate}': targetExpireDate,
         }
       };
       if (SOLAPI_TEMPLATE_ID_EXHAUSTED) {

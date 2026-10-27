@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, CheckCircle2, AlertCircle, Lock, ShieldCheck, Ticket, User, Calendar, Loader2, ChevronDown, Check } from 'lucide-react';
+import { X, Send, CheckCircle2, AlertCircle, Lock, Ticket, User, Calendar, Loader2 } from 'lucide-react';
+import dayjs from 'dayjs';
 
 interface AdminExhaustedModalProps {
   isOpen: boolean;
@@ -14,8 +15,11 @@ interface ExhaustedTicket {
   productName: string;
   remaining: number;
   total: number;
-  expireDate: string;
+  registeredDate?: string;
+  remark?: string;
 }
+
+const getTodayDateString = (): string => dayjs().format('YYYY-MM-DD');
 
 export default function AdminExhaustedModal({ isOpen, onClose }: AdminExhaustedModalProps) {
   const [step, setStep] = useState<'auth' | 'dialog' | 'confirm' | 'success'>('auth');
@@ -40,7 +44,7 @@ export default function AdminExhaustedModal({ isOpen, onClose }: AdminExhaustedM
   const [phone, setPhone] = useState('');
   const [realName, setRealName] = useState('');
   const [productName, setProductName] = useState('');
-  const [expireDate, setExpireDate] = useState('');
+  const [expireDate, setExpireDate] = useState(getTodayDateString());
 
   // Submission State
   const [submitting, setSubmitting] = useState(false);
@@ -70,7 +74,7 @@ export default function AdminExhaustedModal({ isOpen, onClose }: AdminExhaustedM
       setIsDropdownOpen(false);
       setRealName('');
       setProductName('');
-      setExpireDate('');
+      setExpireDate(getTodayDateString());
       setStatus(null);
       setConfirmPasscode('');
       setConfirmError('');
@@ -148,11 +152,12 @@ export default function AdminExhaustedModal({ isOpen, onClose }: AdminExhaustedM
     if (found) {
       setRealName(found.nickname);
       setProductName(found.productName);
-      setExpireDate(found.expireDate);
+      if (!expireDate) {
+        setExpireDate(getTodayDateString());
+      }
     } else {
       setRealName('');
       setProductName('');
-      setExpireDate('');
     }
   };
 
@@ -165,6 +170,10 @@ export default function AdminExhaustedModal({ isOpen, onClose }: AdminExhaustedM
     }
     if (!phone.trim()) {
       setStatus({ type: 'error', message: '수신자 연락처를 입력해주세요.' });
+      return;
+    }
+    if (!expireDate.trim()) {
+      setStatus({ type: 'error', message: '만료일자를 입력해주세요.' });
       return;
     }
     setConfirmPasscode('');
@@ -184,7 +193,7 @@ export default function AdminExhaustedModal({ isOpen, onClose }: AdminExhaustedM
           realName: realName.trim(),
           phone: phone.trim(),
           productName: productName.trim(),
-          expireDate: expireDate.trim() || '-',
+          expireDate: expireDate.trim() || getTodayDateString(),
           passCode: passcode
         })
       });
@@ -213,7 +222,7 @@ export default function AdminExhaustedModal({ isOpen, onClose }: AdminExhaustedM
     setPhone('');
     setRealName('');
     setProductName('');
-    setExpireDate('');
+    setExpireDate(getTodayDateString());
     setStatus(null);
     setConfirmPasscode('');
     setConfirmError('');
@@ -332,6 +341,18 @@ export default function AdminExhaustedModal({ isOpen, onClose }: AdminExhaustedM
                 />
               </div>
 
+              {/* Expire Date Input (기본값: 오늘 날짜) */}
+              <div className="sch-form-group">
+                <label htmlFor="expireDate">만료일자 지정</label>
+                <input
+                  id="expireDate"
+                  type="date"
+                  value={expireDate}
+                  onChange={(e) => setExpireDate(e.target.value)}
+                  required
+                />
+              </div>
+
               <div className="admin-modal-btn-row">
                 <button
                   type="button"
@@ -416,13 +437,16 @@ export default function AdminExhaustedModal({ isOpen, onClose }: AdminExhaustedM
           </div>
         ) : step === 'success' ? (
           /* Step 4: Success screen */
-          <div className="admin-auth-container admin-success-container">
+          <div className="admin-success-container">
             <div className="admin-success-icon">
-              <CheckCircle2 size={48} />
+              <CheckCircle2 size={32} />
             </div>
             <h2 className="sch-modal-title">알림톡 발송 완료</h2>
-            <p className="sch-modal-desc">수강권 사용 완료 알림톡이<br />성공적으로 발송되었습니다.<br /><small>2초 후 자동으로 닫힘니다.</small></p>
-            <div className="admin-modal-btn-row" style={{ marginTop: '16px' }}>
+            <p className="sch-modal-desc">
+              수강권 사용 완료 알림톡이<br />성공적으로 발송되었습니다.
+              <span className="admin-auto-close-hint">2초 후 자동으로 닫힙니다.</span>
+            </p>
+            <div className="admin-modal-btn-row">
               <button type="button" className="sch-btn-reset" onClick={handleContinueSending}>
                 계속 발송하기
               </button>
