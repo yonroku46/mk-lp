@@ -740,6 +740,8 @@ main {
       flex-direction: column;
       gap: 6px;
       margin-bottom: 16px;
+      width: 100%;
+      min-width: 0;
 
       label {
         font-size: 0.6875rem;
@@ -755,11 +757,42 @@ main {
         border: 1px solid var(--border);
         border-radius: 12px;
         width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
         font-size: 0.875rem;
         font-weight: 600;
         background: #fafafa;
         color: var(--text-primary);
         transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+        -webkit-appearance: none;
+        appearance: none;
+
+        &[type="date"] {
+          -webkit-appearance: none;
+          appearance: none;
+          display: block;
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+          box-sizing: border-box;
+
+          /* iOS Safari 날짜 입력 시 텍스트 좌측 정렬 및 높이 정규화 */
+          &::-webkit-date-and-time-value {
+            text-align: left;
+            min-height: 1.25em;
+          }
+
+          &::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+
+            &:hover {
+              opacity: 1;
+            }
+          }
+        }
 
         &::placeholder {
           font-weight: 400;
@@ -1903,6 +1936,11 @@ main {
     max-height: 90vh;
     overflow-y: auto;
     margin: 0 1.5rem;
+
+    @media (max-width: 480px) {
+      margin: 0 1rem;
+      padding: 20px 16px;
+    }
   }
 
   .admin-auth-container {
