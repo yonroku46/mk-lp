@@ -246,7 +246,7 @@ function GroupScheduleContent() {
       level: '기초',
       maxMembers: 4,
       currentMembers: 2,
-      schedule: [{ day: 5, start: '13:00', end: '14:00' }],
+      schedule: [{ day: 5, start: '14:00', end: '15:00' }],
     },
   ], []);
 

@@ -302,7 +302,7 @@ export default function AdminExhaustedModal({ isOpen, onClose }: AdminExhaustedM
 
             <form onSubmit={handleSend} className="admin-dialog-form">
               <div className="sch-form-group">
-                <label htmlFor="ticketSelect">소진 대상자 선택 (최근 1개월 이내)</label>
+                <label htmlFor="ticketSelect">소진 대상자 선택 (최근 2개월 이내)</label>
                 {loadingTickets ? (
                   <div className="admin-ticket-loading">
                     <Loader2 size={16} className="spin" />
@@ -317,7 +317,7 @@ export default function AdminExhaustedModal({ isOpen, onClose }: AdminExhaustedM
                     required
                   >
                     <option value="" disabled>
-                      {tickets.length > 0 ? '대상자 선택' : '최근 1개월 이내 소진된 수강권이 없습니다'}
+                      {tickets.length > 0 ? '대상자 선택' : '최근 2개월 이내 소진된 수강권이 없습니다'}
                     </option>
                     {tickets.map(t => (
                       <option key={t.id} value={t.id}>

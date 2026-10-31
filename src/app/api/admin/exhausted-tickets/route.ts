@@ -9,11 +9,11 @@ const getCacheBustedUrl = (url: string) => {
   return `${url}${separator}t=${Date.now()}`;
 };
 
-// 최근 1개월 이내 등록 여부 판단 유틸
-const isWithinOneMonth = (dateStr: string): boolean => {
+// 최근 2개월 이내 등록 여부 판단 유틸
+const isWithinTwoMonths = (dateStr: string): boolean => {
   if (!dateStr) return false;
   const d = dayjs(dateStr.replace(/\./g, '-').replace(/\//g, '-').trim());
-  return d.isValid() && d.isAfter(dayjs().subtract(1, 'month'));
+  return d.isValid() && d.isAfter(dayjs().subtract(2, 'month'));
 };
 
 export async function GET() {
@@ -65,8 +65,8 @@ export async function GET() {
         const remaining = Number(row[remIdx]);
         const registeredDate = row[regIdx] || '';
 
-        // 남은 횟수 0회 & 등록일자가 최근 1개월 이내
-        return !isNaN(remaining) && remaining === 0 && isWithinOneMonth(registeredDate);
+        // 남은 횟수 0회 & 등록일자가 최근 2개월 이내
+        return !isNaN(remaining) && remaining === 0 && isWithinTwoMonths(registeredDate);
       })
       .map((row, idx) => ({
         id: `ticket-${idx}-${row[nIdx]}-${row[tnIdx]}`,
