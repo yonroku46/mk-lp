@@ -22,24 +22,24 @@ const TICKET_PRODUCT_GROUPS: TicketGroup[] = [
   {
     groupName: '개인레슨 55분 수업',
     products: [
-      { id: 'private_55_4', name: '월 4회 (주1회)', price: 140000 },
-      { id: 'private_55_8', name: '월 8회 (주2회)', price: 280000 },
-      { id: 'private_55_12', name: '월 12회 (주3회)', price: 420000 },
+      { id: 'private_55_4', name: '4회', price: 140000 },
+      { id: 'private_55_8', name: '8회', price: 280000 },
+      { id: 'private_55_12', name: '12회', price: 420000 },
     ],
   },
   {
     groupName: '개인레슨 85분 수업',
     products: [
-      { id: 'private_85_4', name: '월 4회 (주1회)', price: 210000 },
-      { id: 'private_85_8', name: '월 8회 (주2회)', price: 420000 },
-      { id: 'private_85_12', name: '월 12회 (주3회)', price: 630000 },
+      { id: 'private_85_4', name: '4회', price: 210000 },
+      { id: 'private_85_8', name: '8회', price: 420000 },
+      { id: 'private_85_12', name: '12회', price: 630000 },
     ],
   },
   {
     groupName: '그룹레슨 55분 수업',
     products: [
-      { id: 'group_55_4', name: '월 4회 (주1회)', price: 88000 },
-      { id: 'group_55_8', name: '월 8회 (주2회)', price: 176000 },
+      { id: 'group_55_4', name: '4회 (4주/주 1회)', price: 88000 },
+      { id: 'group_55_8', name: '8회 (4주/주 2회)', price: 176000 },
     ],
   },
 ];
