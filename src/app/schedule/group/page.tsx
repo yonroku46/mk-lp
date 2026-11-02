@@ -125,7 +125,7 @@ function GroupScheduleContent() {
       title: '초급 회화',
       level: '초급',
       maxMembers: 4,
-      currentMembers: 0,
+      currentMembers: 1,
       schedule: [{ day: 1, start: '19:00', end: '20:00' }],
     },
 
@@ -239,14 +239,6 @@ function GroupScheduleContent() {
       maxMembers: 4,
       currentMembers: 0,
       schedule: [{ day: 5, start: '11:00', end: '12:00' }],
-    },
-    {
-      id: 'sat-13',
-      title: 'N4・5 대비',
-      level: '기초',
-      maxMembers: 4,
-      currentMembers: 2,
-      schedule: [{ day: 5, start: '14:00', end: '15:00' }],
     },
   ], []);
 
