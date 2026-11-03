@@ -118,7 +118,7 @@ function GroupScheduleContent() {
       level: '중급',
       maxMembers: 4,
       currentMembers: 0,
-      schedule: [{ day: 1, start: '16:00', end: '15:00' }],
+      schedule: [{ day: 1, start: '16:00', end: '17:00' }],
     },
     {
       id: 'tue-18',
