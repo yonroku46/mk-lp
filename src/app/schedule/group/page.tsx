@@ -107,18 +107,10 @@ function GroupScheduleContent() {
     {
       id: 'tue-15',
       title: 'N3 대비',
-      level: '초급',
+      level: '중급',
       maxMembers: 4,
       currentMembers: 2,
       schedule: [{ day: 1, start: '15:00', end: '16:00' }],
-    },
-    {
-      id: 'tue-16',
-      title: '중급 회화',
-      level: '중급',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 1, start: '16:00', end: '17:00' }],
     },
     {
       id: 'tue-18',
@@ -133,13 +125,13 @@ function GroupScheduleContent() {
       title: '초급 회화',
       level: '초급',
       maxMembers: 4,
-      currentMembers: 1,
+      currentMembers: 3,
       schedule: [{ day: 1, start: '19:00', end: '20:00' }],
     },
     {
       id: 'tue-20',
-      title: '기초 문법',
-      level: '기초',
+      title: '초급 회화',
+      level: '초급',
       maxMembers: 4,
       currentMembers: 0,
       schedule: [{ day: 1, start: '20:00', end: '21:00' }],
@@ -148,8 +140,8 @@ function GroupScheduleContent() {
     // ---------------- 수요일 (day: 2) ----------------
     {
       id: 'wed-10',
-      title: '초급 회화',
-      level: '초급',
+      title: '중급 회화',
+      level: '중급',
       maxMembers: 4,
       currentMembers: 0,
       schedule: [{ day: 2, start: '10:00', end: '11:00' }],
@@ -161,6 +153,14 @@ function GroupScheduleContent() {
       maxMembers: 4,
       currentMembers: 2,
       schedule: [{ day: 2, start: '11:00', end: '12:00' }],
+    },
+      {
+      id: 'wed-15',
+      title: '초급 회화',
+      level: '초급',
+      maxMembers: 4,
+      currentMembers: 0,
+      schedule: [{ day: 2, start: '15:00', end: '16:00' }],
     },
     {
       id: 'wed-19',
@@ -179,24 +179,6 @@ function GroupScheduleContent() {
       schedule: [{ day: 2, start: '20:00', end: '21:00' }],
     },
 
-    // ---------------- 목요일 (day: 3) ----------------
-    {
-      id: 'thu-14',
-      title: '기초 문법',
-      level: '기초',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 3, start: '14:00', end: '15:00' }],
-    },
-    {
-      id: 'thu-15',
-      title: '초급 회화',
-      level: '초급',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 3, start: '15:00', end: '16:00' }],
-    },
-
     // ---------------- 금요일 (day: 4) ----------------
     {
       id: 'fri-11',
@@ -209,18 +191,10 @@ function GroupScheduleContent() {
     {
       id: 'fri-15',
       title: 'N3 대비',
-      level: '초급',
+      level: '중급',
       maxMembers: 4,
       currentMembers: 2,
       schedule: [{ day: 4, start: '15:00', end: '16:00' }],
-    },
-    {
-      id: 'fri-16',
-      title: '중급 회화',
-      level: '중급',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 4, start: '16:00', end: '17:00' }],
     },
     {
       id: 'fri-17',
@@ -245,40 +219,6 @@ function GroupScheduleContent() {
       maxMembers: 4,
       currentMembers: 2,
       schedule: [{ day: 4, start: '19:00', end: '20:00' }],
-    },
-
-    // ---------------- 토요일 (day: 5) ----------------
-    {
-      id: 'sat-10',
-      title: '중급 회화',
-      level: '중급',
-      maxMembers: 4,
-      currentMembers: 3,
-      schedule: [{ day: 5, start: '10:00', end: '11:00' }],
-    },
-    {
-      id: 'sat-11',
-      title: '기초 문법',
-      level: '기초',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 5, start: '11:00', end: '12:00' }],
-    },
-    {
-      id: 'sat-12',
-      title: '초급 회화',
-      level: '초급',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 5, start: '13:00', end: '14:00' }],
-    },
-    {
-      id: 'sat-13',
-      title: '기초 실전',
-      level: '기초',
-      maxMembers: 4,
-      currentMembers: 0,
-      schedule: [{ day: 5, start: '14:00', end: '15:00' }],
     },
   ], []);
 
